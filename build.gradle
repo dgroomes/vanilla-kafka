@@ -1,0 +1,39 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.6.RELEASE'
+    id 'java'
+}
+
+ext["junit-jupiter.version"] = "5.5.1"
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'dgroomes'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: "junit"
+    }
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        showStandardStreams = true
+        exceptionFormat "full"
+    }
+
+    outputs.upToDateWhen { false } // never skip the tests
+}

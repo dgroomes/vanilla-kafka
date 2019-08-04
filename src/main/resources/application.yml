@@ -1,0 +1,8 @@
+spring:
+  kafka:
+    consumer:
+      group-id: my-group
+      bootstrap-servers: localhost:9092
+      enable-auto-commit: false
+    listener:
+      ack-mode: manual
