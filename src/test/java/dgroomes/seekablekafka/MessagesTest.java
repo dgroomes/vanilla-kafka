@@ -25,11 +25,11 @@ class MessagesTest {
     Messages messages;
 
     /**
-     * Produce a test message and assert that it is consumed by the app
+     * Send a test message and assert that it is consumed by the app
      */
     @Test
     @Timeout(10)
-    void poll() throws ExecutionException, InterruptedException {
+    void sendAndReceive() throws ExecutionException, InterruptedException {
         long now = Instant.now().getEpochSecond();
         String msg = String.format("hello: %d", now);
 
