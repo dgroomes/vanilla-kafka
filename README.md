@@ -18,6 +18,8 @@ commands. Commands include:
 
   * `up` bring up the Docker containers using Docker Compose
   * `down` take down the Docker containers using Docker Compose
+  * `build` build (without tests)
+  * `run` run the app
   * `test` execute the tests
   * `consume` consume from the `my-messages` Kafka topic
   * `current-offsets` get current Kafka topic offsets for the `my-group` group 

@@ -13,7 +13,7 @@ import java.util.concurrent.BlockingQueue;
  * Abstraction over messages incoming from the Kafka topic "my-messages"
  */
 @Component
-public class Messages {
+public class Messages extends SeekableKafkaListener {
 
     private static Logger log = LoggerFactory.getLogger(Messages.class);
 

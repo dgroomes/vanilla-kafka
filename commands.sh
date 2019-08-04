@@ -12,6 +12,16 @@ down() {
   "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/down.sh
 }
 
+# Build (without the tests)
+build() {
+  "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/build.sh
+}
+
+# Run the app
+run() {
+  "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/run.sh
+}
+
 # Execute the tests
 test() {
   "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/test.sh

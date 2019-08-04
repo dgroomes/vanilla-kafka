@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.util.concurrent.ExecutionException;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.kafka.template.default-topic=my-messages"
 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 class MessagesTest {
 
     @Autowired
