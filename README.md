@@ -22,6 +22,7 @@ commands. Commands include:
   * `run` run the app
   * `test` execute the tests
   * `consume` consume from the `my-messages` Kafka topic
+  * `produce` produce a test message to the `my-messages` Kafka topic 
   * `current-offsets` get current Kafka topic offsets for the `my-group` group 
   
 Dependencies required across all commands include:
@@ -32,3 +33,5 @@ Dependencies required across all commands include:
 ### todo
 
   * Implement the actual "seek to beginning/end" operations (with tests)
+  * Why does seeking to the beginning stop the Kafka consumer? When it seeks to beginning, it reads
+    up to the latest offset but then will stop polling and not consume new messages...
