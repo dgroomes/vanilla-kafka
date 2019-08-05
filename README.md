@@ -28,5 +28,7 @@ Dependencies required across all commands include:
   
 ### todo
 
+  * How do I exit the program gracefully?
+  * How do I set log levels? (I'm not in Spring Boot anymore I can' use `application.yml`...)
   * Can we pause and resume the KafkaConsumer?
   * Can we seek the KafkaConsumer?
