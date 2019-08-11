@@ -39,5 +39,5 @@ consume() {
 
 # Produce a test message to the Kafka topic
 produce() {
-  "$VANILLA_KAFKA_ROOT_DIR"/scripts/produce.sh
+  "$VANILLA_KAFKA_ROOT_DIR"/scripts/produce.sh $@
 }
