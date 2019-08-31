@@ -3,6 +3,7 @@ package dgroomes.vanillakafka;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
@@ -104,7 +105,7 @@ public class Messages {
 
     /**
      * (Asynchronous) Reset the Kafka offsets to the beginning
-     *
+     * <p>
      * The Kafka offsets will be reset to the beginning before the next call to KafkaConsumer#poll
      */
     public void reset() {
@@ -113,7 +114,7 @@ public class Messages {
 
     /**
      * (Synchronous) Reset the Kafka offsets to the beginning
-     *
+     * <p>
      * This must be executed on the same thread as the Kafka consumer. See the official guidance at the note
      * "Multi-threaded Processing" at https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html
      */
@@ -123,5 +124,27 @@ public class Messages {
                 .map(it -> new TopicPartition(it.topic(), it.partition()))
                 .collect(Collectors.toList());
         consumer.seekToBeginning(topicPartitions);
+    }
+
+    /**
+     * (Asynchronous) Rewind the Kafka offsets by N spots
+     * <p>
+     * The Kafka offsets will be rewound before the next call to KafkaConsumer#poll
+     */
+    public void rewind(int n) {
+        prePollAction.set(() -> this.doRewind(n));
+    }
+
+    /**
+     * (Synchronous) Rewind the Kafka offsets of each TopicPartition by N spots
+     */
+    private void doRewind(int n) {
+        var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
+        for (PartitionInfo partitionInfo : partitionInfos) {
+            var topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
+            var nextPosition = consumer.position(topicPartition);
+            var currentPosition = nextPosition - 1; // KafkaConsumer#position returns the next position, so we need to subtract 1 to get the current position
+            consumer.seek(topicPartition, currentPosition - n);
+        }
     }
 }

@@ -54,9 +54,12 @@ public class Application {
         var reader = new BufferedReader(new InputStreamReader(System.in));
         String command;
         while ((command = reader.readLine()) != null) {
-            if (command.equals("reset offsets")) {
-                log.info("Resetting offsets...");
+            if (command.equals("reset")) {
+                log.info("Requested to reset offsets...");
                 messages.reset();
+            } else if (command.equals("rewind")) {
+                log.info("Requested to rewind offsets...");
+                messages.rewind(5);
             } else {
                 log.info("command '{}' not recognized", command);
             }
