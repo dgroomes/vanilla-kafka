@@ -30,5 +30,4 @@ Dependencies required across all commands include:
 
   * Should prefer using interrupts to stop KafkaConsumer? Even though KafkaConsumer recommends
     using a flag? See <https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html>
-  * How do I set log levels? (I'm not in Spring Boot anymore I can' use `application.yml`...)
   * Can we pause and resume the KafkaConsumer?
