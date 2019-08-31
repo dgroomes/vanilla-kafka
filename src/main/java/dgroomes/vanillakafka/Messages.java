@@ -3,6 +3,7 @@ package dgroomes.vanillakafka;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +15,15 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Abstraction over messages sourced from the Kafka topic "my-messages
  */
 public class Messages {
 
+    public static final String MY_MESSAGES_TOPIC = "my-messages";
     private static Logger log = LoggerFactory.getLogger(Messages.class);
 
     private BlockingQueue<String> queue = new ArrayBlockingQueue<>(10);
@@ -29,6 +33,11 @@ public class Messages {
     private Duration pollDuration = Duration.of(2, ChronoUnit.SECONDS);
 
     private AtomicBoolean active = new AtomicBoolean(false);
+
+    /**
+     * If non null, this will be executed before the next KafkaConsumer#poll
+     */
+    private AtomicReference<Runnable> prePollAction = new AtomicReference<>(null);
 
     public Messages() {
         Properties config = new Properties();
@@ -45,7 +54,7 @@ public class Messages {
     public void start() {
         log.info("Starting...");
         active.getAndSet(true);
-        consumer.subscribe(List.of("my-messages"));
+        consumer.subscribe(List.of(MY_MESSAGES_TOPIC));
         var thread = new Thread(this::pollContinuously);
         thread.start();
     }
@@ -53,6 +62,11 @@ public class Messages {
     private void pollContinuously() {
         try {
             while (active.get()) {
+                var prePollAction = this.prePollAction.get();
+                if (prePollAction != null) {
+                    prePollAction.run();
+                    this.prePollAction.set(null);
+                }
                 ConsumerRecords<Void, String> records = consumer.poll(pollDuration);
                 for (ConsumerRecord<Void, String> record : records) {
                     String message = record.value();
@@ -86,5 +100,28 @@ public class Messages {
         log.info("Stopping ...");
         active.getAndSet(false);
         consumer.wakeup();
+    }
+
+    /**
+     * (Asynchronous) Reset the Kafka offsets to the beginning
+     *
+     * The Kafka offsets will be reset to the beginning before the next call to KafkaConsumer#poll
+     */
+    public void reset() {
+        prePollAction.set(this::doReset);
+    }
+
+    /**
+     * (Synchronous) Reset the Kafka offsets to the beginning
+     *
+     * This must be executed on the same thread as the Kafka consumer. See the official guidance at the note
+     * "Multi-threaded Processing" at https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html
+     */
+    private void doReset() {
+        var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
+        var topicPartitions = partitionInfos.stream()
+                .map(it -> new TopicPartition(it.topic(), it.partition()))
+                .collect(Collectors.toList());
+        consumer.seekToBeginning(topicPartitions);
     }
 }

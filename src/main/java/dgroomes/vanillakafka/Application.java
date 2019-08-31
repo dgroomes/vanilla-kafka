@@ -36,7 +36,7 @@ public class Application {
 
     /**
      * Stop the application.
-     *
+     * <p>
      * Stops each worker tasks and worker threads.
      */
     void stop() throws InterruptedException {
@@ -48,13 +48,18 @@ public class Application {
     }
 
     /**
-     * (Blocking) Accept input from standard input. TODO implement actual commands like 'reset offsets'
+     * (Blocking) Accept input from standard input.
      */
     void acceptInput() throws IOException {
         var reader = new BufferedReader(new InputStreamReader(System.in));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            System.out.println(String.format("echo: %s", line));
+        String command;
+        while ((command = reader.readLine()) != null) {
+            if (command.equals("reset offsets")) {
+                log.info("Resetting offsets...");
+                messages.reset();
+            } else {
+                log.info("command '{}' not recognized", command);
+            }
         }
     }
 }
