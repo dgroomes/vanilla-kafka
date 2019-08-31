@@ -9,6 +9,9 @@ import java.io.InputStreamReader;
 
 public class Application {
 
+    public static final String CMD_RESET = "reset";
+    public static final String CMD_REWIND = "rewind";
+
     private static Logger log = LoggerFactory.getLogger(Application.class);
 
     private Thread messageTakerThread;
@@ -51,13 +54,15 @@ public class Application {
      * (Blocking) Accept input from standard input.
      */
     void acceptInput() throws IOException {
+        log.info(String.format("Enter '%s' to reset Kafka offsets to the beginning", CMD_RESET));
+        log.info(String.format("Enter '%s' to rewind Kafka offsets by a few spots", CMD_REWIND));
         var reader = new BufferedReader(new InputStreamReader(System.in));
         String command;
         while ((command = reader.readLine()) != null) {
-            if (command.equals("reset")) {
+            if (command.equals(CMD_RESET)) {
                 log.info("Requested to reset offsets...");
                 messages.reset();
-            } else if (command.equals("rewind")) {
+            } else if (command.equals(CMD_REWIND)) {
                 log.info("Requested to rewind offsets...");
                 messages.rewind(5);
             } else {
