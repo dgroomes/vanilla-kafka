@@ -19,7 +19,7 @@ commands. Commands include:
   * `test` execute the tests
   * `consume` consume from the `my-messages` Kafka topic
   * `produce` produce a test message to the `my-messages` Kafka topic 
-  * `current-offsets` get current Kafka topic offsets for the `my-group` group 
+  * `currentOffsets` get current Kafka topic offsets for the `my-group` group 
   
 Dependencies required across all commands include:
 
@@ -32,4 +32,3 @@ Dependencies required across all commands include:
     using a flag? See <https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html>
   * How do I set log levels? (I'm not in Spring Boot anymore I can' use `application.yml`...)
   * Can we pause and resume the KafkaConsumer?
-  * Can we seek the KafkaConsumer?
