@@ -1,6 +1,6 @@
 # vanilla-kafka
 
-Let's code to a vanilla KafkaConsumer (no frameworks) and learn something in the process!"
+Let's code to a vanilla KafkaConsumer (no frameworks) and learn something in the process!
 
 ### Development
 
