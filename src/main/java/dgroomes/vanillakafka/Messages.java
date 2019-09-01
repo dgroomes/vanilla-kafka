@@ -29,7 +29,7 @@ public class Messages {
 
     private Duration pollDuration = Duration.of(2, ChronoUnit.SECONDS);
 
-    private AtomicBoolean active = new AtomicBoolean(false);
+    private final AtomicBoolean active = new AtomicBoolean(false);
 
     private Thread consumerThread;
 
@@ -52,11 +52,17 @@ public class Messages {
      * Start consuming messages
      */
     public void start() {
-        log.info("Starting");
-        active.getAndSet(true);
-        consumer.subscribe(List.of(MY_MESSAGES_TOPIC));
-        consumerThread = new Thread(this::pollContinuously);
-        consumerThread.start();
+        synchronized (active) {
+            log.info("Starting");
+            if (active.get()) {
+                log.info("Already started");
+            } else {
+                active.getAndSet(true);
+                consumer.subscribe(List.of(MY_MESSAGES_TOPIC));
+                consumerThread = new Thread(this::pollContinuously);
+                consumerThread.start();
+            }
+        }
     }
 
     private void pollContinuously() {
@@ -79,10 +85,16 @@ public class Messages {
     }
 
     public void stop() throws InterruptedException {
-        log.info("Stopping");
-        active.getAndSet(false);
-        consumer.wakeup();
-        consumerThread.join();
+        synchronized (active) {
+            log.info("Stopping");
+            if (active.get()) {
+                active.getAndSet(false);
+                consumer.wakeup();
+                consumerThread.join();
+            } else {
+                log.info("Already stopped");
+            }
+        }
     }
 
     /**

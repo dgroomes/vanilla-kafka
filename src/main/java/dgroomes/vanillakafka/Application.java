@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 
 public class Application {
 
-    public static final String CMD_RESET = "reset";
-    public static final String CMD_REWIND = "rewind";
+    private static final String CMD_START = "start";
+    private static final String CMD_STOP = "stop";
+    private static final String CMD_RESET = "reset";
+    private static final String CMD_REWIND = "rewind";
 
     private static Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -40,7 +42,11 @@ public class Application {
         var reader = new BufferedReader(new InputStreamReader(System.in));
         String command;
         while ((command = reader.readLine()) != null) {
-            if (command.equals(CMD_RESET)) {
+            if (command.equals(CMD_START)) {
+                messages.start();
+            } else if (command.equals(CMD_STOP)) {
+                messages.stop();
+            } else if (command.equals(CMD_RESET)) {
                 messages.reset();
             } else if (command.equals(CMD_REWIND)) {
                 messages.rewind(5);
