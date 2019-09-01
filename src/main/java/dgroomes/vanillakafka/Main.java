@@ -13,7 +13,7 @@ public class Main {
     private static Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        log.info("Hello world. Let's use a vanilla Java Kafka consumer and see if we can learn something");
+        log.info("Let's code to a vanilla KafkaConsumer (no frameworks) and learn something in the process!");
         var app = new Application();
         app.start();
 

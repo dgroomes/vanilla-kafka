@@ -101,41 +101,64 @@ public class Messages {
      * (Blocking) Reset the Kafka offsets to the beginning
      */
     public void reset() throws InterruptedException {
-        stop();
-        log.info("Resetting offsets");
-        var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
-        var topicPartitions = partitionInfos.stream()
-                .map(it -> new TopicPartition(it.topic(), it.partition()))
-                .collect(Collectors.toList());
-        consumer.seekToBeginning(topicPartitions);
-        start();
+        executeOperation(() -> {
+            log.info("Resetting offsets");
+            var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
+            var topicPartitions = partitionInfos.stream()
+                    .map(it -> new TopicPartition(it.topic(), it.partition()))
+                    .collect(Collectors.toList());
+            consumer.seekToBeginning(topicPartitions);
+        });
     }
 
     /**
      * (Blocking) Rewind the Kafka offsets of each TopicPartition by N spots
      */
     public void rewind(int n) throws InterruptedException {
-        stop();
-        log.info("Rewinding offsets by {} spots for each topic partition", n);
-        var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
-        for (PartitionInfo partitionInfo : partitionInfos) {
-            var topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
-            var nextOffsetToRead = consumer.position(topicPartition);
-            consumer.seek(topicPartition, nextOffsetToRead - 5);
-        }
-        start();
+        executeOperation(() -> {
+            log.info("Rewinding offsets by {} spots for each topic partition", n);
+            var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
+            for (PartitionInfo partitionInfo : partitionInfos) {
+                var topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
+                var nextOffsetToRead = consumer.position(topicPartition);
+                consumer.seek(topicPartition, nextOffsetToRead - 5);
+            }
+        });
     }
 
     /**
      * Print the current Kafka offsets for each topic partition
      */
     public void currentOffsets() throws InterruptedException {
-        stop();
-        var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
-        for (PartitionInfo partitionInfo : partitionInfos) {
-            var topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
-            var currentOffset = consumer.position(topicPartition);
-            log.info("{} currentOffset={}", topicPartition.toString(), currentOffset);
+        executeOperation(() -> {
+            log.info("Current offsets:");
+            var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
+            for (PartitionInfo partitionInfo : partitionInfos) {
+                var topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
+                var currentOffset = consumer.position(topicPartition);
+                log.info("topicPartition={} currentOffset={}", topicPartition.toString(), currentOffset);
+            }
+        });
+    }
+
+    /**
+     * 1. stop the KafkaConsumer if started
+     * 2. Execute an operation
+     * 3. start the KafkaConsumer if was started before the operation
+     */
+    private void executeOperation(Runnable operation) throws InterruptedException {
+        synchronized (active) {
+            boolean needsStart;
+            if (active.get()) {
+                stop();
+                needsStart = true;
+            } else {
+                needsStart = false;
+            }
+            operation.run();
+            if (needsStart) {
+                start();
+            }
         }
     }
 }
