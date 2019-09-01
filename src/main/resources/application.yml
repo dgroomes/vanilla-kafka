@@ -10,5 +10,5 @@ spring:
       log-container-config: true
 logging:
   level:
-    org.springframework.kafka.listener: trace
-    org.apache.kafka.clients.consumer: trace
+    org.springframework.kafka.listener: warn
+    org.apache.kafka.clients.consumer: warn

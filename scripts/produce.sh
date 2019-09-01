@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# Produce a test message to the Kafka topic
+# Produce test messages to the Kafka topic
+# Example to produce ten messages: ./produce.sh 10
+
+REPETITIONS=${1:-1}
 
 SECONDS=$(date +%s)
-echo "hello $SECONDS" | kafkacat -b localhost:9092 -t my-messages
+
+for i in $(seq 1 $REPETITIONS); do
+  echo "hello($SECONDS) $i" | kafkacat -b localhost:9092 -t my-messages
+done

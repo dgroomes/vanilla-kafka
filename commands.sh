@@ -37,7 +37,7 @@ consume() {
   "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/consume.sh
 }
 
-# Produce a test message to the Kafka topic
+# Produce test messages to the Kafka topic
 produce() {
-  "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/produce.sh
+  "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/produce.sh $@
 }
