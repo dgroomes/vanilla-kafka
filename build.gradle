@@ -20,22 +20,8 @@ dependencies {
     implementation "org.slf4j:slf4j-api:$slf4jVersion"
     implementation "org.slf4j:slf4j-simple:$slf4jVersion"
     implementation "org.apache.kafka:kafka-clients:$kafkaClientVersion"
-
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
 }
 
 application {
     mainClassName = "dgroomes.vanillakafka.Main"
-}
-
-test {
-    useJUnitPlatform()
-
-    testLogging {
-        showStandardStreams = true
-        exceptionFormat "full"
-    }
-
-    outputs.upToDateWhen { false } // never skip the tests
 }

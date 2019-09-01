@@ -1,6 +1,6 @@
 # vanilla-kafka
 
-Experimenting with the vanilla, plain-old, Java Kafka consumer.
+Let's code to a vanilla KafkaConsumer (no frameworks) and learn something in the process!"
 
 ### Development
 
@@ -14,9 +14,8 @@ commands. Commands include:
 
   * `up` bring up the Docker containers using Docker Compose
   * `down` take down the Docker containers using Docker Compose
-  * `build` build (without tests)
+  * `build` build
   * `run` run the app
-  * `test` execute the tests
   * `consume` consume from the `my-messages` Kafka topic
   * `produce` produce a test message to the `my-messages` Kafka topic 
   * `currentOffsets` get current Kafka topic offsets for the `my-group` group 
@@ -30,4 +29,3 @@ Dependencies required across all commands include:
 
   * Should prefer using interrupts to stop KafkaConsumer? Even though KafkaConsumer recommends
     using a flag? See <https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html>
-  * Can we pause and resume the KafkaConsumer?
