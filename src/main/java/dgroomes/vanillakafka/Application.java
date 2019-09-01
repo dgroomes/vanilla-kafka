@@ -14,40 +14,21 @@ public class Application {
 
     private static Logger log = LoggerFactory.getLogger(Application.class);
 
-    private Thread messageTakerThread;
     private Messages messages;
 
     /**
      * (Non-blocking) Start the application
      */
     void start() {
-        messages = new Messages();
+        messages = new Messages(msg -> log.info("Got message: {}", msg));
         messages.start();
-
-        messageTakerThread = new Thread(() -> {
-            try {
-                while (!Thread.currentThread().isInterrupted()) {
-                    String msg = messages.take();
-                    log.info("Got message: {}", msg);
-                }
-            } catch (InterruptedException e) {
-                log.info("'messageTaker' thread was interrupted.");
-            }
-        });
-        messageTakerThread.start();
     }
 
     /**
      * Stop the application.
-     * <p>
-     * Stops each worker tasks and worker threads.
      */
     void stop() throws InterruptedException {
         messages.stop();
-        log.info("interrupting messageTakerThread");
-        messageTakerThread.interrupt();
-        log.info("joining messageTakerThread");
-        messageTakerThread.join();
     }
 
     /**

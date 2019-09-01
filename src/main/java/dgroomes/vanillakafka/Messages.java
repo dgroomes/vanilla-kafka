@@ -13,9 +13,8 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -26,8 +25,6 @@ public class Messages {
     public static final String MY_MESSAGES_TOPIC = "my-messages";
     private static Logger log = LoggerFactory.getLogger(Messages.class);
 
-    private BlockingQueue<String> queue = new ArrayBlockingQueue<>(10);
-
     private KafkaConsumer<Void, String> consumer;
 
     private Duration pollDuration = Duration.of(2, ChronoUnit.SECONDS);
@@ -36,7 +33,13 @@ public class Messages {
 
     private Thread consumerThread;
 
-    public Messages() {
+    private Consumer<String> action;
+
+    /**
+     * @param action execute for each message received from the Kafka topic
+     */
+    public Messages(Consumer<String> action) {
+        this.action = action;
         Properties config = new Properties();
         config.put("group.id", "my-group");
         config.put("bootstrap.servers", "localhost:9092");
@@ -58,18 +61,11 @@ public class Messages {
 
     private void pollContinuously() {
         try {
-            pollLoop:
             while (active.get()) {
                 ConsumerRecords<Void, String> records = consumer.poll(pollDuration);
                 for (ConsumerRecord<Void, String> record : records) {
                     String message = record.value();
-                    log.debug("Putting message: {}", message);
-                    try {
-                        queue.put(message); // if this blocks for too long the consumer group will die right? Need a heart beat thread?
-                    } catch (InterruptedException e) {
-                        log.info("Thread was interrupted. Stopping");
-                        break pollLoop;
-                    }
+                    action.accept(message);
                     consumer.commitSync();
                 }
             }
@@ -82,13 +78,6 @@ public class Messages {
         }
     }
 
-    /**
-     * Take a message, blocking if none is available
-     */
-    public String take() throws InterruptedException {
-        return queue.take();
-    }
-
     public void stop() throws InterruptedException {
         log.info("Stopping");
         active.getAndSet(false);
@@ -97,7 +86,7 @@ public class Messages {
     }
 
     /**
-     * (Synchronous) Reset the Kafka offsets to the beginning
+     * (Blocking) Reset the Kafka offsets to the beginning
      */
     public void reset() throws InterruptedException {
         stop();
@@ -111,7 +100,7 @@ public class Messages {
     }
 
     /**
-     * (Synchronous) Rewind the Kafka offsets of each TopicPartition by N spots
+     * (Blocking) Rewind the Kafka offsets of each TopicPartition by N spots
      */
     public void rewind(int n) throws InterruptedException {
         stop();
