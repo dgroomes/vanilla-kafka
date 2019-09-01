@@ -120,10 +120,22 @@ public class Messages {
         var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
         for (PartitionInfo partitionInfo : partitionInfos) {
             var topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
-            var nextPosition = consumer.position(topicPartition);
-            var currentPosition = nextPosition - 1; // KafkaConsumer#position returns the next position, so we need to subtract 1 to get the current position
-            consumer.seek(topicPartition, currentPosition - n);
+            var nextOffsetToRead = consumer.position(topicPartition);
+            consumer.seek(topicPartition, nextOffsetToRead - 5);
         }
         start();
+    }
+
+    /**
+     * Print the current Kafka offsets for each topic partition
+     */
+    public void currentOffsets() throws InterruptedException {
+        stop();
+        var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
+        for (PartitionInfo partitionInfo : partitionInfos) {
+            var topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
+            var currentOffset = consumer.position(topicPartition);
+            log.info("{} currentOffset={}", topicPartition.toString(), currentOffset);
+        }
     }
 }
