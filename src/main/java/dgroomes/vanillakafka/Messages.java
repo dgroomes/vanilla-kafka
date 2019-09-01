@@ -16,7 +16,6 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -35,10 +34,7 @@ public class Messages {
 
     private AtomicBoolean active = new AtomicBoolean(false);
 
-    /**
-     * If non null, this will be executed before the next KafkaConsumer#poll
-     */
-    private AtomicReference<Runnable> prePollAction = new AtomicReference<>(null);
+    private Thread consumerThread;
 
     public Messages() {
         Properties config = new Properties();
@@ -53,21 +49,17 @@ public class Messages {
      * Start consuming messages
      */
     public void start() {
-        log.info("Starting...");
+        log.info("Starting");
         active.getAndSet(true);
         consumer.subscribe(List.of(MY_MESSAGES_TOPIC));
-        var thread = new Thread(this::pollContinuously);
-        thread.start();
+        consumerThread = new Thread(this::pollContinuously);
+        consumerThread.start();
     }
 
     private void pollContinuously() {
         try {
+            pollLoop:
             while (active.get()) {
-                var prePollAction = this.prePollAction.get();
-                if (prePollAction != null) {
-                    prePollAction.run();
-                    this.prePollAction.set(null);
-                }
                 ConsumerRecords<Void, String> records = consumer.poll(pollDuration);
                 for (ConsumerRecord<Void, String> record : records) {
                     String message = record.value();
@@ -75,8 +67,8 @@ public class Messages {
                     try {
                         queue.put(message); // if this blocks for too long the consumer group will die right? Need a heart beat thread?
                     } catch (InterruptedException e) {
-                        log.info("Thread was interrupted. Stopping...");
-                        stop();
+                        log.info("Thread was interrupted. Stopping");
+                        break pollLoop;
                     }
                     consumer.commitSync();
                 }
@@ -97,48 +89,33 @@ public class Messages {
         return queue.take();
     }
 
-    public void stop() {
-        log.info("Stopping ...");
+    public void stop() throws InterruptedException {
+        log.info("Stopping");
         active.getAndSet(false);
         consumer.wakeup();
-    }
-
-    /**
-     * (Asynchronous) Reset the Kafka offsets to the beginning
-     * <p>
-     * The Kafka offsets will be reset to the beginning before the next call to KafkaConsumer#poll
-     */
-    public void reset() {
-        prePollAction.set(this::doReset);
+        consumerThread.join();
     }
 
     /**
      * (Synchronous) Reset the Kafka offsets to the beginning
-     * <p>
-     * This must be executed on the same thread as the Kafka consumer. See the official guidance at the note
-     * "Multi-threaded Processing" at https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html
      */
-    private void doReset() {
+    public void reset() throws InterruptedException {
+        stop();
+        log.info("Resetting offsets");
         var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
         var topicPartitions = partitionInfos.stream()
                 .map(it -> new TopicPartition(it.topic(), it.partition()))
                 .collect(Collectors.toList());
         consumer.seekToBeginning(topicPartitions);
-    }
-
-    /**
-     * (Asynchronous) Rewind the Kafka offsets by N spots
-     * <p>
-     * The Kafka offsets will be rewound before the next call to KafkaConsumer#poll
-     */
-    public void rewind(int n) {
-        prePollAction.set(() -> this.doRewind(n));
+        start();
     }
 
     /**
      * (Synchronous) Rewind the Kafka offsets of each TopicPartition by N spots
      */
-    private void doRewind(int n) {
+    public void rewind(int n) throws InterruptedException {
+        stop();
+        log.info("Rewinding offsets by {} spots for each topic partition", n);
         var partitionInfos = consumer.partitionsFor(MY_MESSAGES_TOPIC);
         for (PartitionInfo partitionInfo : partitionInfos) {
             var topicPartition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
@@ -146,5 +123,6 @@ public class Messages {
             var currentPosition = nextPosition - 1; // KafkaConsumer#position returns the next position, so we need to subtract 1 to get the current position
             consumer.seek(topicPartition, currentPosition - n);
         }
+        start();
     }
 }

@@ -53,17 +53,15 @@ public class Application {
     /**
      * (Blocking) Accept input from standard input.
      */
-    void acceptInput() throws IOException {
-        log.info(String.format("Enter '%s' to reset Kafka offsets to the beginning", CMD_RESET));
-        log.info(String.format("Enter '%s' to rewind Kafka offsets by a few spots", CMD_REWIND));
+    void acceptInput() throws IOException, InterruptedException {
+        log.info("Enter '{}' to reset Kafka offsets to the beginning", CMD_RESET);
+        log.info("Enter '{}' to rewind Kafka offsets by a few spots", CMD_REWIND);
         var reader = new BufferedReader(new InputStreamReader(System.in));
         String command;
         while ((command = reader.readLine()) != null) {
             if (command.equals(CMD_RESET)) {
-                log.info("Requested to reset offsets...");
                 messages.reset();
             } else if (command.equals(CMD_REWIND)) {
-                log.info("Requested to rewind offsets...");
                 messages.rewind(5);
             } else {
                 log.info("command '{}' not recognized", command);
