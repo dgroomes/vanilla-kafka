@@ -14,7 +14,8 @@ commands. Commands include:
 
   * `up` bring up the Docker containers using Docker Compose
   * `down` take down the Docker containers using Docker Compose
-  * `build` build
+  * `build` build (without running the tests)
+  * `runTests` run the tests
   * `run` run the app
   * `consume` consume from the `my-messages` Kafka topic
   * `produce` produce a test message to the `my-messages` Kafka topic 
