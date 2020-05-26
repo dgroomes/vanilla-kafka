@@ -2,16 +2,6 @@
 
 export KAFKA_STREAMS_ROOT_DIR=$(pwd)
 
-# Bring up the Docker containers using Docker Compose
-up() {
-  "$KAFKA_STREAMS_ROOT_DIR"/scripts/up.sh
-}
-
-# Take down the Docker containers using Docker Compose
-down() {
-  "$KAFKA_STREAMS_ROOT_DIR"/scripts/down.sh
-}
-
 # Build (without the tests)
 build() {
   "$KAFKA_STREAMS_ROOT_DIR"/scripts/build.sh
@@ -35,4 +25,19 @@ consume() {
 # Produce a test message to the Kafka topic
 produce() {
   "$KAFKA_STREAMS_ROOT_DIR"/scripts/produce.sh $@
+}
+
+# Create the input and output Kafka topics
+createTopics() {
+  "$KAFKA_STREAMS_ROOT_DIR"/scripts/create-topics.sh $@
+}
+
+# Start Zookeeper and Kafka
+startKafka() {
+  "$KAFKA_STREAMS_ROOT_DIR"/scripts/start-kafka.sh $@
+}
+
+# Stop Zookeeper and Kafka
+stopKafka() {
+  "$KAFKA_STREAMS_ROOT_DIR"/scripts/stop-kafka.sh $@
 }
