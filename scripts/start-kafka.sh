@@ -25,7 +25,7 @@ function checkKafka() {
 }
 
 function waitForExit() {
-  echo "Waiting until Kafka and Zookeeper exit. Shutdown them down with 'stopKafka'"
+  echo "Waiting until Kafka and Zookeeper exit. Shut them down with 'stopKafka'"
   wait < <(jobs -p)
   exit 0
 }
