@@ -58,7 +58,7 @@ public class Topology {
         final KTable<String, Long> counts = source
                 .mapValues(value -> {
                     try {
-                        log.info("Input message received. Sleeping for {}ms", INPUT_MESSAGE_SLEEP);
+                        log.info("Input message received: {}. Sleeping for {}ms", value, INPUT_MESSAGE_SLEEP);
                         Thread.sleep(INPUT_MESSAGE_SLEEP);
                     } catch (InterruptedException e) {
                         log.error("Interrupted while sleeping", e);
