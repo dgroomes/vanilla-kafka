@@ -31,7 +31,9 @@ public class Topology {
 
         final StreamsBuilder builder = new StreamsBuilder();
         createWordCountStream(builder);
-        kafkaStreams = new KafkaStreams(builder.build(), props);
+        var topology = builder.build();
+        log.info("Initialized Kafka Streams topology to {}", topology.describe());
+        kafkaStreams = new KafkaStreams(topology, props);
     }
 
     static Properties getStreamsConfig() {
@@ -41,6 +43,7 @@ public class Topology {
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+        props.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 10);
 
         // setting offset reset to earliest so that we can re-run the demo code with the same pre-loaded data
         // Note: To re-run the demo, you need to use the offset reset tool:
