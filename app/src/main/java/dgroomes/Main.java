@@ -4,28 +4,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 /**
- * The application runner
+ * The application runner. Initializes and starts the Kafka Streams topology. Handles shutdown.
  */
 public class Main {
 
-    private static Logger log = LoggerFactory.getLogger(Main.class);
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
         log.info("Let's implement a basic Kafka Streams application and learn something in the process!");
-        var app = new Application();
-        app.start();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                log.info("Stopping the app");
-                app.stop();
-            } catch (InterruptedException e) {
-                throw new RuntimeException("Shutdown thread was interrupted. Failed to stop the app.", e);
+        var topology = new Topology();
+        final CountDownLatch latch = new CountDownLatch(1);
+        Runtime.getRuntime().addShutdownHook(new Thread("streams-wordcount-shutdown-hook") {
+            @Override
+            public void run() {
+                log.info("Stopping the topology");
+                topology.stop();
+                latch.countDown();
             }
-        }));
+        });
 
-        app.acceptInput();
+        try {
+            topology.start();
+            latch.await();
+        } catch (final Throwable e) {
+            log.error("Error. Did not shutdown as expected.", e);
+            System.exit(1);
+        }
+        System.exit(0);
     }
 }
