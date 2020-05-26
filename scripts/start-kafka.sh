@@ -12,9 +12,7 @@
 rm /usr/local/var/lib/zookeeper/version-2/*
 rm -rf /usr/local/var/lib/kafka-logs/cleaner-offset-checkpoint /usr/local/var/lib/kafka-logs/log-start-offset-checkpoint /usr/local/var/lib/kafka-logs/meta.properties /usr/local/var/lib/kafka-logs/recovery-point-offset-checkpoint /usr/local/var/lib/kafka-logs/replication-offset-checkpoint
 
-# Adapted from https://stackoverflow.com/a/55943975
 zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties &
-#while ! nc -z localhost 2181; do sleep 0.1; done
 kafka-server-start /usr/local/etc/kafka/server.properties &
 
 ATTEMPTS=3
