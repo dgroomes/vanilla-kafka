@@ -6,6 +6,12 @@ NOT YET IMPLEMENTED Learning and exploring Kafka Streams <https://kafka.apache.o
 
 This project is adapted from <https://github.com/dgroomes/vanilla-kafka> and <https://kafka.apache.org/25/documentation/streams/quickstart>.
 
+It illuminates the threading model of Kafka Streams by sleeping for each input message. For example, if ten messages are
+input, and the Kafka Streams topology is bound by one thread, then it will take ten seconds to process the messages. By
+contrast, if the input Kafka topic has five partitions and the Kafka Streams app is configured with five threads, then
+it should take as little as two seconds to process the messages! Experiment with different configurations of the input
+topic, Kafka Streams topology operations, and Kafka Streams configurations.   
+
 ### Instructions
 
 * Use Java 11.

@@ -23,6 +23,7 @@ public class Topology {
     private static final Logger log = LoggerFactory.getLogger(Topology.class);
     public static final String INPUT_TOPIC = "streams-plaintext-input";
     public static final String OUTPUT_TOPIC = "streams-wordcount-output";
+    public static final int INPUT_MESSAGE_SLEEP = 1000;
     private final KafkaStreams kafkaStreams;
 
     public Topology() {
@@ -52,6 +53,15 @@ public class Topology {
         final KStream<String, String> source = builder.stream(INPUT_TOPIC);
 
         final KTable<String, Long> counts = source
+                .mapValues(value -> {
+                    try {
+                        log.info("Input message received. Sleeping for {}ms", INPUT_MESSAGE_SLEEP);
+                        Thread.sleep(INPUT_MESSAGE_SLEEP);
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted while sleeping", e);
+                    }
+                    return value;
+                })
                 .flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split(" ")))
                 .groupBy((key, value) -> value)
                 .count();
