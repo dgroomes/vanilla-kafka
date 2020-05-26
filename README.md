@@ -11,7 +11,8 @@ This project is adapted from <https://github.com/dgroomes/vanilla-kafka> and <ht
 * Use Java 11.
 * Running the application and the test cases depend on a locally running Kafka instance. Use the `startKafka` and 
   `stopKafka` commands (see [`commands.sh`](#commandssh)) to run Kafka and Zookeeper.
-* In a new terminal, build and run with `build` and `run`
+* In a new terminal, create the input and output Kafka topics with `createTopics`
+* Build and run with `build && run`
 * In a new terminal, start consuming the output Kafka topic with `consume` (you won't see anything until you start 
   producing!)
 * In a new terminal, produce some test data with `produce`. You should see some data in your consumer! Next, try 
@@ -29,6 +30,7 @@ commands. Commands include:
   * `currentOffsets` get current Kafka topic offsets for the `my-group` group 
   * `startKafka` start Zookeeper and Kafka
   * `stopKafka` start Kafka and Zookeeper
+  * `createTopics` create the input and output Kafka topics 
   
 Dependencies required across all commands include:
 
