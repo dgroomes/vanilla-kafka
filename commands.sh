@@ -41,3 +41,8 @@ startKafka() {
 stopKafka() {
   "$KAFKA_STREAMS_ROOT_DIR"/scripts/stop-kafka.sh $@
 }
+
+# Clean the Kafka Streams state directory (RocksDB data) for when things get messed up
+cleanState() {
+  rm -rf /tmp/kafka-streams/streams-wordcount/*
+}

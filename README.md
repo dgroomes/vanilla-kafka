@@ -37,6 +37,7 @@ commands. Commands include:
   * `startKafka` start Zookeeper and Kafka
   * `stopKafka` start Kafka and Zookeeper
   * `createTopics` create the input and output Kafka topics 
+  * `cleanState` clean the Kafka Streams state directory (RocksDB data) for when things get messed up  
   
 Dependencies required across all commands include:
 
