@@ -10,7 +10,7 @@
 # would know how to operation Zookeeper and Kafka correctly, but the "delete everything every time" approach works.
 
 rm /usr/local/var/lib/zookeeper/version-2/*
-rm -rf /usr/local/var/lib/kafka-logs/cleaner-offset-checkpoint /usr/local/var/lib/kafka-logs/log-start-offset-checkpoint /usr/local/var/lib/kafka-logs/meta.properties /usr/local/var/lib/kafka-logs/recovery-point-offset-checkpoint /usr/local/var/lib/kafka-logs/replication-offset-checkpoint
+rm -rf /usr/local/var/lib/kafka-logs/*
 
 zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties &
 kafka-server-start /usr/local/etc/kafka/server.properties &
