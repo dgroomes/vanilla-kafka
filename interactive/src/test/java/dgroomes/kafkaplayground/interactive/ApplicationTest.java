@@ -1,4 +1,4 @@
-package dgroomes.vanillakafka;
+package dgroomes.kafkaplayground.interactive;
 
 import org.junit.jupiter.api.Test;
 

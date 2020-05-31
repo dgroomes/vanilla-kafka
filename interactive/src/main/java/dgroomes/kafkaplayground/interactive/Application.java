@@ -1,4 +1,4 @@
-package dgroomes.vanillakafka;
+package dgroomes.kafkaplayground.interactive;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

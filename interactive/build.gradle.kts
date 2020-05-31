@@ -3,5 +3,5 @@ plugins {
 }
 
 application {
-    mainClassName = "dgroomes.vanillakafka.Main"
+    mainClassName = "dgroomes.kafkaplayground.interactive.Main"
 }

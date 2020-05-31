@@ -1,4 +1,4 @@
-package dgroomes.vanillakafka;
+package dgroomes.kafkaplayground.interactive;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;

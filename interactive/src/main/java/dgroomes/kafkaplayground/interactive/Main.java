@@ -1,4 +1,4 @@
-package dgroomes.vanillakafka;
+package dgroomes.kafkaplayground.interactive;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        log.info("Let's code to a vanilla KafkaConsumer (no frameworks) and learn something in the process!");
+        log.info("Let's learn and experiment!");
         var app = new Application();
         app.start();
 
