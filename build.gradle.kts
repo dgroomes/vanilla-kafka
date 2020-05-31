@@ -4,6 +4,7 @@ val junitJupiterVersion = "5.6.2" // releases: https://junit.org/junit5/docs/cur
 
 subprojects {
     apply(plugin = "java")
+    apply(plugin = "application")
     repositories {
         mavenCentral()
     }
@@ -21,5 +22,21 @@ subprojects {
 
         "testImplementation"("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
         "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    }
+}
+
+project(":interactive") {
+    configure<ApplicationPluginConvention> {
+        mainClassName = "dgroomes.kafkaplayground.interactive.Main"
+    }
+}
+
+project(":streams") {
+    configure<ApplicationPluginConvention> {
+        mainClassName = "dgroomes.Main"
+    }
+
+    dependencies {
+        "implementation"("org.apache.kafka:kafka-streams:$kafkaClientVersion")
     }
 }

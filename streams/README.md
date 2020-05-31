@@ -1,4 +1,4 @@
-# kafka-streams-playground
+# streams
 
 Learning and exploring Kafka Streams <https://kafka.apache.org/documentation/streams/>.
 
