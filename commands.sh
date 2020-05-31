@@ -23,7 +23,9 @@ run() {
 }
 
 # Execute the tests
-test() {
+# 'test' is a command already. Strange stuff happens if you try to declare a function called 'test'
+# So let's call this 'runTests'.
+runTests() {
   "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/test.sh
 }
 
