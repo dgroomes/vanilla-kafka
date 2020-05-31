@@ -1,3 +1,3 @@
-rootProject.name = "vanilla-kafka"
+rootProject.name = "kafka-playground"
 
 include("interactive")

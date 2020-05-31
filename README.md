@@ -1,4 +1,4 @@
-# vanilla-kafka
+# kafka-playground
 
 Learning and experimenting with Apache Kafka <https://kafka.apache.org/>.
 
