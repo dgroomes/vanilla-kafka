@@ -2,14 +2,14 @@
 
 export VANILLA_KAFKA_ROOT_DIR=$(pwd)
 
-# Bring up the Docker containers using Docker Compose
-up() {
-  "$VANILLA_KAFKA_ROOT_DIR"/scripts/up.sh
+# Start Kafka and Zookeeper
+startKafka() {
+  "$VANILLA_KAFKA_ROOT_DIR"/scripts/start-kafka.sh $@
 }
 
-# Take down the Docker containers using Docker Compose
-down() {
-  "$VANILLA_KAFKA_ROOT_DIR"/scripts/down.sh
+# Stop Kafka and Zookeeper
+stopKafka() {
+  "$VANILLA_KAFKA_ROOT_DIR"/scripts/stop-kafka.sh $@
 }
 
 # Build (without the tests)
