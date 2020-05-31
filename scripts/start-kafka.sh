@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Start Zookeeper and Kafka
+# Start Kafka and Zookeeper
 #
 # Assumes that Kafka and Zookeeper are installed. I installed Kafka with `brew install kafka`. PRO TIP: change the log
 # levels by editing `/usr/local/etc/kafka/log4j.properties` to reduce noise as needed.

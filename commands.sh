@@ -32,12 +32,12 @@ createTopics() {
   "$KAFKA_STREAMS_ROOT_DIR"/scripts/create-topics.sh $@
 }
 
-# Start Zookeeper and Kafka
+# Start Kafka and Zookeeper
 startKafka() {
   "$KAFKA_STREAMS_ROOT_DIR"/scripts/start-kafka.sh $@
 }
 
-# Stop Zookeeper and Kafka
+# Stop  Kafka and Zookeeper
 stopKafka() {
   "$KAFKA_STREAMS_ROOT_DIR"/scripts/stop-kafka.sh $@
 }

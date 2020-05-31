@@ -1,6 +1,6 @@
 # kafka-streams-playground
 
-NOT YET IMPLEMENTED Learning and exploring Kafka Streams <https://kafka.apache.org/documentation/streams/>.
+Learning and exploring Kafka Streams <https://kafka.apache.org/documentation/streams/>.
 
 ---
 
@@ -34,8 +34,8 @@ commands. Commands include:
   * `consume` consume from the `my-messages` Kafka topic
   * `produce` produce a test message to the `my-messages` Kafka topic 
   * `currentOffsets` get current Kafka topic offsets for the `my-group` group 
-  * `startKafka` start Zookeeper and Kafka
-  * `stopKafka` start Kafka and Zookeeper
+  * `startKafka` start Kafka and Zookeeper
+  * `stopKafka` stop Kafka and Zookeeper
   * `createTopics` create the input and output Kafka topics 
   * `cleanState` clean the Kafka Streams state directory (RocksDB data) for when things get messed up  
   
@@ -58,4 +58,7 @@ Items I wish to implement for this project:
 ### Notes
 
 A neat trick to check for processes that are using a port is to use the `lsof` command. For example, use
-`echo "zookeeper port?" && lsof -i :2181; echo "kafka port?" && lsof -i :9092` to check if Zookeeper and/or Kafka are running. 
+
+```echo "zookeeper port?" && lsof -i :2181; echo "kafka port?" && lsof -i :9092```
+
+to check if Zookeeper and/or Kafka are running. 
