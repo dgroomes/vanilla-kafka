@@ -33,7 +33,7 @@ project(":interactive") {
 
 project(":streams") {
     configure<ApplicationPluginConvention> {
-        mainClassName = "dgroomes.Main"
+        mainClassName = "dgroomes.kafkaplayground.streams.Main"
     }
 
     dependencies {

@@ -1,4 +1,4 @@
-package dgroomes;
+package dgroomes.kafkaplayground.streams;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
