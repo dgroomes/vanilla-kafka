@@ -23,17 +23,17 @@ import java.util.stream.Collectors;
 public class Messages {
 
     public static final String MY_MESSAGES_TOPIC = "my-messages";
-    private static Logger log = LoggerFactory.getLogger(Messages.class);
+    private static final Logger log = LoggerFactory.getLogger(Messages.class);
 
-    private KafkaConsumer<Void, String> consumer;
+    private final KafkaConsumer<Void, String> consumer;
 
-    private Duration pollDuration = Duration.of(2, ChronoUnit.SECONDS);
+    private final Duration pollDuration = Duration.of(2, ChronoUnit.SECONDS);
 
     private final AtomicBoolean active = new AtomicBoolean(false);
 
     private Thread consumerThread;
 
-    private Consumer<String> action;
+    private final Consumer<String> action;
 
     /**
      * @param action execute for each message received from the Kafka topic

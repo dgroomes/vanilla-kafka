@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class Main {
 
-    private static Logger log = LoggerFactory.getLogger(Main.class);
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
         log.info("Let's code to a vanilla KafkaConsumer (no frameworks) and learn something in the process!");

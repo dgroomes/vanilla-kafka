@@ -15,7 +15,7 @@ public class Application {
     private static final String CMD_REWIND = "rewind";
     private static final String CMD_CURRENT_OFFSETS = "current-offsets";
 
-    private static Logger log = LoggerFactory.getLogger(Application.class);
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     private Messages messages;
 
