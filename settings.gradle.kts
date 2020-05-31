@@ -1,3 +1,3 @@
 rootProject.name = "kafka-playground"
 
-include("interactive")
+include("interactive", "streams")
