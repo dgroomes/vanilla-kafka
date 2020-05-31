@@ -1,4 +1,4 @@
-package dgroomes.seekablekafka;
+package dgroomes.kafkaplayground.springseekable;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

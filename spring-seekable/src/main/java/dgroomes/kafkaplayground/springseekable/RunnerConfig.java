@@ -1,4 +1,4 @@
-package dgroomes.seekablekafka;
+package dgroomes.kafkaplayground.springseekable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile;
 @Profile("!test")
 public class RunnerConfig {
 
-    private static Logger log = LoggerFactory.getLogger(RunnerConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(RunnerConfig.class);
 
     /**
      * The user can press the "enter" key to seek the app to the beginning of the Kafka topic

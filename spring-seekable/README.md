@@ -1,5 +1,7 @@
 # spring-seekable
 
+WARNING: DOES NOT ACTUALLY SEEK CORRECTLY!
+
 A basic Spring Kafka application with a "seekable" Kafka listener.
 
 ---

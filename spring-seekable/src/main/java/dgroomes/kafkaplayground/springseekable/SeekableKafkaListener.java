@@ -1,4 +1,4 @@
-package dgroomes.seekablekafka;
+package dgroomes.kafkaplayground.springseekable;
 
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -11,13 +11,13 @@ import java.util.concurrent.CountDownLatch;
 
 public abstract class SeekableKafkaListener implements ConsumerSeekAware {
 
-    private static Logger log = LoggerFactory.getLogger(SeekableKafkaListener.class);
+    private static final Logger log = LoggerFactory.getLogger(SeekableKafkaListener.class);
 
-    private Map<TopicPartition, ConsumerSeekCallback> callbacks = new ConcurrentHashMap<>();
+    private final Map<TopicPartition, ConsumerSeekCallback> callbacks = new ConcurrentHashMap<>();
 
-    private static ThreadLocal<ConsumerSeekCallback> callbackForThread = new ThreadLocal<>();
+    private static final ThreadLocal<ConsumerSeekCallback> callbackForThread = new ThreadLocal<>();
 
-    private CountDownLatch isReady = new CountDownLatch(1);
+    private final CountDownLatch isReady = new CountDownLatch(1);
 
     /**
      * Await for the listener to be ready

@@ -66,6 +66,10 @@ project(":spring-seekable") {
 
     ext["junit-jupiter.version"] = junitJupiterVersion
 
+    configure<ApplicationPluginConvention> {
+        mainClassName = "dgroomes.kafkaplayground.springseekable.Main"
+    }
+
     dependencies {
         "implementation"("org.springframework.boot:spring-boot-starter")
         "implementation"("org.springframework.kafka:spring-kafka")
