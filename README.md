@@ -23,3 +23,10 @@ See [streams/README.md](streams/README.md).
 A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application with a "seekable" Kafka listener.
 
 See [spring-seekable/README.md](spring-seekable/README.md).
+
+### `spring-headers/`
+
+A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that showcases the Spring framework behavior
+around Kafka message headers.
+
+See [spring-headers/README.md](spring-headers/README.md).

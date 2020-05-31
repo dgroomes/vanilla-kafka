@@ -1,4 +1,4 @@
-package dgroomes.kafkaplayground.springseekable;
+package dgroomes.kafkaplayground.springheaders;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +15,9 @@ import java.util.concurrent.BlockingQueue;
 @Component
 public class Messages extends SeekableKafkaListener {
 
-    private static Logger log = LoggerFactory.getLogger(Messages.class);
+    private static final Logger log = LoggerFactory.getLogger(Messages.class);
 
-    private BlockingQueue<String> queue;
+    private final BlockingQueue<String> queue;
 
     public Messages() {
         this.queue = new ArrayBlockingQueue<>(10);
