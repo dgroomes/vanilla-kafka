@@ -1,4 +1,4 @@
-# seekable-kafka
+# spring-seekable
 
 A basic Spring Kafka application with a "seekable" Kafka listener.
 

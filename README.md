@@ -17,3 +17,9 @@ See [interactive/README.md](interactive/README.md).
 A basic Kafka Streams streams application.
 
 See [streams/README.md](streams/README.md).
+
+### `spring-seekable/`
+
+A basic Spring Kafka application with a "seekable" Kafka listener.
+
+See [spring-seekable/README.md](spring-seekable/README.md).
