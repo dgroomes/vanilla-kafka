@@ -2,14 +2,14 @@
 
 export SEEKABLE_KAFKA_ROOT_DIR=$(pwd)
 
-# Bring up the Docker containers using Docker Compose
-up() {
-  "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/up.sh
+# Start Kafka and Zookeeper
+startKafka() {
+  "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/start-kafka.sh $@
 }
 
-# Take down the Docker containers using Docker Compose
-down() {
-  "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/down.sh
+# Stop Kafka and Zookeeper
+stopKafka() {
+  "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/stop-kafka.sh $@
 }
 
 # Build (without the tests)
