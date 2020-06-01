@@ -1,6 +1,6 @@
 # spring-headers
 
-NOT YET FULLY IMPLEMENTED A basic Spring Kafka application that showcases the Spring framework behavior around Kafka
+A basic Spring Kafka application that showcases the Spring framework behavior around Kafka
 message headers.
 
 ---
@@ -19,7 +19,7 @@ message headers. This project aims to de-mystify and illuminate that behavior. L
 * Running the application and the test cases depend on a locally running Kafka instance. Use the `startKafka` and 
   `stopKafka` commands (see [`commands.sh`](#commandssh)) to run Kafka and Zookeeper.
 * In a new terminal, build and run the program with `build && run`
-* In a new terminal, produce some test data with `produceA`. You should see the application react with new logs.
+* In a new terminal, produce some test data with `produceMessageA`. You should see the application react with new logs.
 
 ### `commands.sh`
 
@@ -30,4 +30,4 @@ commands. Commands include:
   * `stopKafka` stop Kafka and Zookeeper
   * `build` build (without tests)
   * `run` run the app
-  * `produce` produce a test message to the `my-messages` Kafka topic 
+  * `produceMessageA` produce a test message to the `my-messages` Kafka topic for the "MessageA" type 

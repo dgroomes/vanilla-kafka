@@ -23,6 +23,6 @@ run() {
 }
 
 # Produce a test message to the Kafka topic with a "type" header equal to "dgroomes.kafkaplayground.springheaders.model.A"
-produceA() {
-  "$SPRING_HEADERS_ROOT_DIR"/scripts/produce.sh dgroomes.kafkaplayground.springheaders.model.A
+produceMessageA() {
+  "$SPRING_HEADERS_ROOT_DIR"/scripts/produce.sh dgroomes.kafkaplayground.springheaders.model.MessageA
 }

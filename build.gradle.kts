@@ -1,10 +1,11 @@
 plugins {
-    id("org.springframework.boot") version "2.1.6.RELEASE" apply false
+    id("org.springframework.boot") version "2.3.0.RELEASE" apply false
 }
 
 val slf4jVersion = "1.7.30" // releases: http://www.slf4j.org/news.html
 val kafkaClientVersion = "2.5.0" // releases: https://kafka.apache.org/downloads
 val junitJupiterVersion = "5.6.2" // releases: https://junit.org/junit5/docs/current/release-notes/index.html
+val jacksonVersion = "2.10.4" // releases: https://github.com/FasterXML/jackson/wiki/Jackson-Releases
 
 subprojects {
     apply(plugin = "java")
@@ -76,8 +77,15 @@ springSeekableProject.configure<ApplicationPluginConvention> {
 }
 
 var springHeadersProject = project(":spring-headers")
-springHeadersProject.configure<ApplicationPluginConvention> {
-    mainClassName = "dgroomes.kafkaplayground.springheaders.Main"
+configure(listOf(springHeadersProject)) {
+    configure<ApplicationPluginConvention> {
+        mainClassName = "dgroomes.kafkaplayground.springheaders.Main"
+    }
+    dependencies {
+        // Add Jackson as a runtime dependency because it will enable the Spring Kafka "type-detection machinery" that
+        // we are trying to explore in this sub-project.
+        "implementation"("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    }
 }
 
 configure(listOf(springSeekableProject, springHeadersProject)) {
