@@ -30,3 +30,10 @@ A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that
 around Kafka message headers.
 
 See [spring-headers/README.md](spring-headers/README.md).
+
+### `spring-errors/`
+
+A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that showcases the Spring framework features
+and behavior around Kafka error handling.
+
+See [spring-errors/README.md](spring-errors/README.md).

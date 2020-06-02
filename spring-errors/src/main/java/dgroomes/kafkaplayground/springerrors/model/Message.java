@@ -5,13 +5,13 @@ import java.util.Objects;
 public class Message {
 
     public String message;
-    public String time;
+    public int time;
 
     @Override
     public String toString() {
         return "Message{" +
                 "message='" + message + '\'' +
-                ", time='" + time + '\'' +
+                ", time=" + time +
                 '}';
     }
 
@@ -20,8 +20,8 @@ public class Message {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Message message1 = (Message) o;
-        return Objects.equals(message, message1.message) &&
-                Objects.equals(time, message1.time);
+        return time == message1.time &&
+                Objects.equals(message, message1.message);
     }
 
     @Override

@@ -22,12 +22,12 @@ run() {
   "$SPRING_ERRORS_ROOT_DIR"/scripts/run.sh
 }
 
-# Produce a test message to the `my-messages` Kafka topic
+# Produce a test JSON message to the `my-messages` Kafka topic
 produceValidMessage() {
   "$SPRING_ERRORS_ROOT_DIR"/scripts/produce-valid-message.sh
 }
 
-# Produce a test message to the `my-messages` Kafka topic that is missing a field in the JSON that the app is expecting
-produceUnexpectedMessage() {
-  "$SPRING_ERRORS_ROOT_DIR"/scripts/produce-unexpected-message.sh
+# Produce a test JSON message to the `my-messages` Kafka topic that has a field of the wrong type
+produceInvalidMessage() {
+  "$SPRING_ERRORS_ROOT_DIR"/scripts/produce-invalid-message.sh
 }

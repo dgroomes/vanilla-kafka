@@ -32,6 +32,6 @@ commands. Commands include:
   * `stopKafka` stop Kafka and Zookeeper
   * `build` build (without tests)
   * `run` run the app
-  * `produceValidMessage` produce a test message to the `my-messages` Kafka topic 
-  * `produceUnexpectedMessage` produce a test message to the `my-messages` Kafka topic that is missing a field in the 
+  * `produceValidMessage` produce a test JSON message to the `my-messages` Kafka topic 
+  * `produceInvalidMessage` produce a test JSON message to the `my-messages` Kafka topic that has a field of the wrong type 
     JSON that the app is expecting 
