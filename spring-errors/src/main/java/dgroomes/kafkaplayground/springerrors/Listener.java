@@ -23,7 +23,7 @@ public class Listener implements ErrorHandler {
 
     @Override
     public void handle(Exception thrownException, ConsumerRecord<?, ?> data) {
-`        if (data != null) {
+        if (data != null) {
 //          Object val = data.value(); why is the value null? Shouldn't it be bytes?
             log.error("Error when processing message for partition {} offset {}", data.partition(), data.offset(), thrownException);
         } else {
