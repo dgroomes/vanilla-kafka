@@ -83,7 +83,8 @@ public class Main {
      * Supply an error handler. It should get picked up by the Spring Boot + Spring Kafka machinery and applied into
      * our Kafka listener. See https://github.com/spring-projects/spring-boot/blob/ac9482d4633fdbdd3913bf63245b5d97076a97d8/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/kafka/KafkaAnnotationDrivenConfiguration.java#L88
      * <p>
-     * I don't really understand why I need a KafkaTemplate that is backed by a ByteArraySerializer. But it's what
+     * I don't really understand why I need a KafkaTemplate that is backed by a ByteArraySerializer. Instead, can I use
+     * a KafkaTemplate that's backed just by a simple StringSerializer? Do I have to work with bytes? But it's what
      * worked. See the "DeadLetterPublishingRecoverer" example at https://docs.spring.io/spring-kafka/docs/2.5.1.RELEASE/reference/html/#dead-letters
      */
     @Bean

@@ -3,6 +3,6 @@
 
 set -eu
 
-SECOND=$(date -j +%S)
+SECOND=$(date -j +%-S)
 
 echo "{\"message\": \"hello\", \"time\": $SECOND}" | kafkacat -P -b localhost:9092 -t my-messages
