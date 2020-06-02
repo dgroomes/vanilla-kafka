@@ -3,6 +3,8 @@ spring:
     consumer:
       group-id: spring-errors-group
       bootstrap-servers: localhost:9092
+    producer:
+      bootstrap-servers: localhost:9092
     listener:
       log-container-config: true
 logging:

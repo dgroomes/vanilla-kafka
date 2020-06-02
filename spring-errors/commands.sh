@@ -31,3 +31,8 @@ produceValidMessage() {
 produceInvalidMessage() {
   "$SPRING_ERRORS_ROOT_DIR"/scripts/produce-invalid-message.sh
 }
+
+# Consume from the Kafka topic
+consumeDeadLetterTopic() {
+  "$SPRING_ERRORS_ROOT_DIR"/scripts/consume-dead-letter-topic.sh
+}

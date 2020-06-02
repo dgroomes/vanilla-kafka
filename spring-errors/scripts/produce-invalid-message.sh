@@ -3,4 +3,6 @@
 
 set -eu
 
-echo "{\"message\": \"hello\", \"time\": \"ishouldbeanumber\"}" | kafkacat -P -b localhost:9092 -t my-messages
+SECOND=$(date -j +%S)
+
+echo "{\"message\": \"hello\", \"time\": \"${SECOND}ishouldbeanumber\"}" | kafkacat -P -b localhost:9092 -t my-messages
