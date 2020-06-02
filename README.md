@@ -8,7 +8,7 @@ The project illustrates different concepts, patterns and examples via sub-projec
 
 ### `interactive/`
 
-An interactive program to consume from Kafka using the vanilla Java [KafkaConsumer](https://github.com/apache/kafka/tree/40b0033eedf823d3bd3c6781cfd871a949c5827e/clients/src/main/java/org/apache/kafka/clients/consumer).
+An interactive program to consume from Kafka using the _plain-ole'/regular/vanilla_ Java [KafkaConsumer](https://github.com/apache/kafka/tree/40b0033eedf823d3bd3c6781cfd871a949c5827e/clients/src/main/java/org/apache/kafka/clients/consumer).
 
 See [interactive/README.md](interactive/README.md). 
 
