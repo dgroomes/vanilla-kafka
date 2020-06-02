@@ -72,15 +72,9 @@ project(":streams") {
 }
 
 var springSeekableProject = project(":spring-seekable")
-springSeekableProject.configure<ApplicationPluginConvention> {
-    mainClassName = "dgroomes.kafkaplayground.springseekable.Main"
-}
-
 var springHeadersProject = project(":spring-headers")
-configure(listOf(springHeadersProject)) {
-    configure<ApplicationPluginConvention> {
-        mainClassName = "dgroomes.kafkaplayground.springheaders.Main"
-    }
+var springErrorsProject = project(":spring-errors")
+configure(listOf(springHeadersProject, springErrorsProject)) {
     dependencies {
         // Add Jackson as a runtime dependency because it will enable the Spring Kafka "type-detection machinery" that
         // we are trying to explore in this sub-project.
@@ -88,7 +82,7 @@ configure(listOf(springHeadersProject)) {
     }
 }
 
-configure(listOf(springSeekableProject, springHeadersProject)) {
+configure(listOf(springSeekableProject, springHeadersProject, springErrorsProject)) {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
 

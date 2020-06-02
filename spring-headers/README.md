@@ -1,7 +1,6 @@
 # spring-headers
 
-A basic Spring Kafka application that showcases the Spring framework behavior around Kafka
-message headers.
+A basic Spring Kafka application that showcases the Spring framework behavior around Kafka message headers.
 
 ---
 
