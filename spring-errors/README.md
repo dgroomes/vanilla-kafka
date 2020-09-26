@@ -20,7 +20,7 @@ This project aims to de-mystify and illuminate it. Let's learn something!
 * In a new terminal, build and run the program with `build && run`
 * In a new terminal, produce some test data with `produceValidMessage`. You should see the application react with new 
   logs.
-* In a new terminal, produce some test data with `produceUnexpectedMessage`. You should see the application react with
+* In a new terminal, produce some test data with `produceInvalidMessage`. You should see the application react with
   new logs.
 * Consume the dead letter topic with `consumeDeadLetterTopic` and you should all the "invalid" messages there. As new 
   "invalid" messages are received by the app, they will be forward to this topic.
