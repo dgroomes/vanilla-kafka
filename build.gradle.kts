@@ -1,11 +1,11 @@
 plugins {
-    id("org.springframework.boot") version "2.3.0.RELEASE" apply false
+    id("org.springframework.boot") version "2.3.4.RELEASE" apply false // release: https://spring.io/projects/spring-boot#learn
 }
 
 val slf4jVersion = "1.7.30" // releases: http://www.slf4j.org/news.html
 val kafkaClientVersion = "2.5.0" // releases: https://kafka.apache.org/downloads
-val junitJupiterVersion = "5.6.2" // releases: https://junit.org/junit5/docs/current/release-notes/index.html
-val jacksonVersion = "2.10.4" // releases: https://github.com/FasterXML/jackson/wiki/Jackson-Releases
+val junitJupiterVersion = "5.7.0" // releases: https://junit.org/junit5/docs/current/release-notes/index.html
+val jacksonVersion = "2.11.3" // releases: https://github.com/FasterXML/jackson/wiki/Jackson-Releases
 
 subprojects {
     apply(plugin = "java")
