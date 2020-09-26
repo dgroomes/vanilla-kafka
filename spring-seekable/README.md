@@ -44,3 +44,5 @@ commands. Commands include:
   * Implement the actual "seek to beginning/end" operations (with tests)
   * Why does seeking to the beginning stop the Kafka consumer? When it seeks to beginning, it reads
     up to the latest offset but then will stop polling and not consume new messages...
+  * Shorten the shutdown hook timeout. It is by default 30 seconds. If you stop Kafka while the app is still running,
+    then when you go to shut down the app it will take 30 seconds to shut down.
