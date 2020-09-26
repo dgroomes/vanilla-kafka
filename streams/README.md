@@ -1,7 +1,5 @@
 # streams
 
-I think I broke this on 9/26 by mistake by upgrading version of libraries... 
-
 Learning and exploring Kafka Streams <https://kafka.apache.org/documentation/streams/>.
 
 ---
