@@ -37,3 +37,9 @@ A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that
 and behavior around Kafka error handling.
 
 See [spring-errors/README.md](spring-errors/README.md).
+
+### `utility-scripts/`
+
+Utility Bash scripts for starting and stopping Kafka and Zookeeper.
+
+See [utility-scripts/README.md](utility-scripts/README.md).

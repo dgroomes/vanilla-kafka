@@ -45,7 +45,7 @@ waitForUp() {
   # Change text output color to red https://stackoverflow.com/a/20983251/1333713
   tput bold
   tput setaf 1
-  echo >&2 "Gave up waiting for Zookeeper to be up and running!"
+  echo >&2 "Gave up waiting for Kafka to be up and running!"
   tput sgr0
 }
 
