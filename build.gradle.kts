@@ -44,22 +44,3 @@ project(":streams") {
         "implementation"("org.apache.kafka:kafka-streams:$kafkaClientVersion")
     }
 }
-
-var springSeekableProject = project(":spring-seekable")
-
-configure(listOf(springSeekableProject)) {
-    apply(plugin = "org.springframework.boot")
-    apply(plugin = "io.spring.dependency-management")
-
-    ext["junit-jupiter.version"] = junitJupiterVersion
-
-    dependencies {
-        "implementation"("org.springframework.boot:spring-boot-starter")
-        "implementation"("org.springframework.kafka:spring-kafka")
-
-        "testImplementation"("org.springframework.boot:spring-boot-starter-test") {
-            exclude(group = "junit")
-        }
-        "testImplementation"("org.springframework.kafka:spring-kafka-test")
-    }
-}

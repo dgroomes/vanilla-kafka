@@ -1,8 +1,8 @@
 rootProject.name = "kafka-playground"
 
 include(
-        "streams",
-        "spring-seekable")
+        "streams")
 includeBuild("interactive")
 includeBuild("spring-errors")
 includeBuild("spring-headers")
+includeBuild("spring-seekable")

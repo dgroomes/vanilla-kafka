@@ -22,8 +22,7 @@ messages from the beginning of a Kafka topic.
 * In a new terminal, produce some test data with `produce`. You should see the application react with new logs. Next,
   try `produce 10`.
 * In the application terminal, press "enter" to seek the consumer to the beginning of the topic. It should replay all 
-  the messages on the topic. WARNING: Unfortunately there is a bug. If you press enter a second time, then it won't 
-  replay the messages. Why?
+  the messages on the topic. WARNING: Unfortunately this doesn't work. It has no effect. No messages get re-processed.
 
 ### `commands.sh`
 
@@ -41,8 +40,8 @@ commands. Commands include:
   
 ### TODO
 
-  * Implement the actual "seek to beginning/end" operations (with tests)
-  * Why does seeking to the beginning stop the Kafka consumer? When it seeks to beginning, it reads
-    up to the latest offset but then will stop polling and not consume new messages...
+  * Why doesn't this work? It appears to seek to the beginning but no messages get printed out that indicate any
+    messages were actually re-processed.
   * Shorten the shutdown hook timeout. It is by default 30 seconds. If you stop Kafka while the app is still running,
     then when you go to shut down the app it will take 30 seconds to shut down.
+  * The test is flaky.
