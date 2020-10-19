@@ -11,6 +11,8 @@ val kafkaClientVersion = "2.5.0" // releases: https://kafka.apache.org/downloads
 val junitJupiterVersion = "5.7.0" // releases: https://junit.org/junit5/docs/current/release-notes/index.html
 val jacksonVersion = "2.11.2" // releases: https://github.com/FasterXML/jackson/wiki/Jackson-Releases
 
+ext["junit-jupiter.version"] = junitJupiterVersion
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -28,7 +30,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "junit")
+        exclude(group = "org.junit.vintage")
     }
     testImplementation("org.springframework.kafka:spring-kafka-test")
 }
