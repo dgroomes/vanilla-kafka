@@ -46,17 +46,8 @@ project(":streams") {
 }
 
 var springSeekableProject = project(":spring-seekable")
-var springHeadersProject = project(":spring-headers")
-var springErrorsProject = project(":spring-errors")
-configure(listOf(springHeadersProject, springErrorsProject)) {
-    dependencies {
-        // Add Jackson as a runtime dependency because it will enable the Spring Kafka "type-detection machinery" that
-        // we are trying to explore in this sub-project.
-        "implementation"("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    }
-}
 
-configure(listOf(springSeekableProject, springHeadersProject, springErrorsProject)) {
+configure(listOf(springSeekableProject)) {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
 
