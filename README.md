@@ -1,6 +1,6 @@
 # kafka-playground
 
-Learning and experimenting with Apache Kafka <https://kafka.apache.org/>.
+📚 Learning and experimenting with Apache Kafka <https://kafka.apache.org/>.
 
 ---
 
