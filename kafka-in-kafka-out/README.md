@@ -1,13 +1,10 @@
 # kafka-in-kafka-out
 
-NOT YET FULLY IMPLEMENTED
-
 A simple *Kafka in, Kafka out* Java program accompanied by an out-of-process test harness.
 
 Let's make a simple program that reads data from a Kafka topic and outputs data to another Kafka topic in a way that models
 a so-called [*pure function*](https://en.wikipedia.org/wiki/Pure_function). A pure function takes data in and puts data
 out. This style of program is a perfect match for Kafka. 
-
 
 ## Architecture
 
@@ -34,17 +31,11 @@ This is a multi-module Gradle project with the following sub-projects:
 * In a new terminal, build and run the tests with:
   * `./gradlew test-harness:test`
 * Stop Kafka with:
-  * `scripts/stop-kaka.sh`
+  * `scripts/stop-kafka.sh`
 
-### todo
+### Wish List
 
-  * Should prefer using interrupts to stop KafkaConsumer? Even though KafkaConsumer recommends
-    using a flag? See <https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html>
-    
-### Notes
+Items I wish to implement for this project:
 
-A neat trick to check for processes that are using a port is to use the `lsof` command. For example, use
-
-```echo "zookeeper port?" && lsof -i :2181; echo "kafka port?" && lsof -i :9092```
-
-to check if Zookeeper and/or Kafka are running. 
+* The test is flaky. The first time it runs, it fails (at least in my own test runs) but subsequent runs it succeeds. I
+  want to dive deeper into what the consumer is doing. When is it ready? 

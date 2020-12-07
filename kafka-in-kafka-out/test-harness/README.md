@@ -1,7 +1,5 @@
 # test-harness
 
-NOT YET IMPLEMENTED
-
 This is a test harness for executing JUnit-based tests against the *Kafka in, Kafka out* program (see `../app`).
 
 These tests are executed *out-of-process* from the `app` process. Perhaps the most important point of the `kafka-in-kafka-out`
