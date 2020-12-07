@@ -5,6 +5,7 @@ set -eu
 
 subProjects=(
 'interactive'
+'kafka-in-kafka-out'
 'spring-errors'
 'spring-headers'
 'spring-seekable'

@@ -17,7 +17,16 @@ The sub-projects include:
 
 An interactive program to consume from Kafka using the _plain-ole'/regular/vanilla_ Java [KafkaConsumer](https://github.com/apache/kafka/tree/40b0033eedf823d3bd3c6781cfd871a949c5827e/clients/src/main/java/org/apache/kafka/clients/consumer).
 
+**TIP**: This is a good project to start with you if you are just learning about Kafka, or more specifically you are
+learning how to interface with Kafka via a Java program.
+
 See [interactive/README.md](interactive/README.md). 
+
+### `kafka-in-kafka-out/`
+
+A simple *Kafka in, Kafka out* Java program accompanied by an out-of-process test harness.
+
+See [kafka-in-kafka-out/README.md](kafka-in-kafka-out/README.md).
 
 ### `streams/`
 
