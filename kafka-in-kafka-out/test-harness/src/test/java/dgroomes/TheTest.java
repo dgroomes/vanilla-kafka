@@ -1,9 +1,8 @@
 package dgroomes;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,5 +29,26 @@ public class TheTest extends BaseTest {
         assertThat(records).hasSize(1);
         var record = records.get(0);
         assertThat(record.value()).isEqualTo("\"Did you say \\\"hello\\\"?\"");
+    }
+
+    /**
+     * Send a unique message and assert that it shows up on the output Kafka topic.
+     */
+    @Test
+    void identity() throws Exception {
+        // Arrange
+        var time = LocalTime.now();
+        var uniqueMsg = "The current time is: %s".formatted(time);
+
+        // Act
+        send(uniqueMsg);
+        Thread.sleep(200);
+
+        // Assert
+        var records = consume();
+        assertThat(records).hasSize(1);
+        var record = records.get(0);
+        var expected = "%s%s%s".formatted('"', uniqueMsg, '"');
+        assertThat(record.value()).isEqualTo(expected);
     }
 }

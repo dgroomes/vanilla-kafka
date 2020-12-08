@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Application {
 
     private static final String INPUT_TOPIC = "input-text";
-    private static final Duration pollDuration = Duration.of(2, ChronoUnit.SECONDS);
+    private static final Duration pollDuration = Duration.ofMillis(200);
     private static final String OUTPUT_TOPIC = "quoted-text";
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
