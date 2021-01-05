@@ -6,12 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
  * Simulate load by generating many Kafka messages. See the README for more info.
- *
- * TODO parameterize the producer compression
  */
 public class Main {
 
@@ -19,7 +18,8 @@ public class Main {
 
     private static final String KAFKA_BROKER_HOST = "localhost:9092";
     private static final String KAFKA_TOPIC = "input-text";
-    public static final int NUMBER_OF_MESSAGES_BETWEEN_FLUSHES = 100_000;
+    private static final int NUMBER_OF_MESSAGES_BETWEEN_FLUSHES = 100_000;
+    private static final String PRODUCER_COMPRESSION = System.getenv("PRODUCER_COMPRESSION");
 
     private final KafkaProducer<Void, String> producer;
 
@@ -79,7 +79,10 @@ public class Main {
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("compression.type", "lz4");
+
+        String compression = Objects.requireNonNullElse(PRODUCER_COMPRESSION, "none");
+        log.info("Kafka producer compression: '{}'", compression);
+        props.put("compression.type", compression);
 
         return new KafkaProducer<>(props);
     }

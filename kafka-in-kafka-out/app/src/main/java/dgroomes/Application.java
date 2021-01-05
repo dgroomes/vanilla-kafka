@@ -33,16 +33,10 @@ public class Application {
     private Thread consumerThread;
     private final boolean synchronous;
 
-    public Application(Consumer<Void, String> consumer, Producer<Void, String> producer) {
+    public Application(Consumer<Void, String> consumer, Producer<Void, String> producer, boolean synchronous) {
         this.consumer = consumer;
         this.producer = producer;
-        String synchronous = System.getenv("SYNCHRONOUS");
-        if (synchronous == null) {
-            this.synchronous = true;
-        } else {
-            this.synchronous = Boolean.parseBoolean(synchronous);
-        }
-        log.info("synchronous: {}", this.synchronous);
+        this.synchronous = synchronous;
     }
 
     /**

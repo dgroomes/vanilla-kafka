@@ -18,7 +18,7 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         log.info("Starting the app. This is a simple stateless transformation app: Kafka in, Kafka out.");
-        var app = new Application(kafkaConsumer(), kafkaProducer());
+        var app = new Application(kafkaConsumer(), kafkaProducer(), isSync());
         app.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -29,6 +29,24 @@ public class Main {
                 throw new RuntimeException("Shutdown thread was interrupted. Failed to stop the app.", e);
             }
         }));
+    }
+
+    /**
+     * Should the Kafka consumption and producing be synchronous?
+     *
+     * @return true if synchronous; false if asynchronous
+     */
+    private static boolean isSync() {
+        String syncStr = System.getenv("SYNCHRONOUS");
+        boolean sync;
+        if (syncStr == null) {
+            // Default to 'synchronous' if the configuration was not specified explicitly.
+            sync = true;
+        } else {
+            sync = Boolean.parseBoolean(syncStr);
+        }
+        log.info("Synchronous: {}", sync);
+        return sync;
     }
 
     /**

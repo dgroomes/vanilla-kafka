@@ -43,6 +43,9 @@ simulator with:
 
 ```
 ./gradlew load-simulator:run --args "10_000_000"
+
+# Optionally, enable compression
+PRODUCER_COMPRESSION=lz4 ./gradlew load-simulator:run --args "10_000_000"
 ```
 
 The integer argument is the number of messages that it will generate. After it's done, you can see the volume of data that
@@ -53,8 +56,8 @@ du -h /usr/local/var/lib/kafka-logs/input-text-0/ \
       /usr/local/var/lib/kafka-logs/quoted-text-0/
 ```
 
-Ideally, I'd like to try to different compression options and see how this effects the ultimate size of the data on disk.
-Furthermore, I could experiment with different settings on the consumer side too.
+You should notice much lower volumes of data for the "input-text" Kafka topic when using compression versus without compression.
+Furthermore, I would like to experiment with different settings on the consumer side too.
 
 Also, to get much more throughput on the `app/`, you can configure it to commit offsets and produce asynchronously by setting
 an environment variable before running it:
