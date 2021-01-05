@@ -49,12 +49,19 @@ The integer argument is the number of messages that it will generate. After it's
 was actually persisted in the the Kafka broker's data directory:
 
 ```
-du -h /usr/local/var/lib/kafka-logs/input-text-0/
-du -h /usr/local/var/lib/kafka-logs/quoted-text-0/
+du -h /usr/local/var/lib/kafka-logs/input-text-0/ \
+      /usr/local/var/lib/kafka-logs/quoted-text-0/
 ```
 
 Ideally, I'd like to try to different compression options and see how this effects the ultimate size of the data on disk.
 Furthermore, I could experiment with different settings on the consumer side too.
+
+Also, to get much more throughput on the `app/`, you can configure it to commit offsets and produce asynchronously by setting
+an environment variable before running it:
+
+```
+SYNCHRONOUS=false ./gradlew app:run
+```
 
 ### Wish list
 

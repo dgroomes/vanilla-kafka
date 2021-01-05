@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -32,10 +31,18 @@ public class Application {
     private final Producer<Void, String> producer;
     private final AtomicBoolean active = new AtomicBoolean(false);
     private Thread consumerThread;
+    private final boolean synchronous;
 
     public Application(Consumer<Void, String> consumer, Producer<Void, String> producer) {
         this.consumer = consumer;
         this.producer = producer;
+        String synchronous = System.getenv("SYNCHRONOUS");
+        if (synchronous == null) {
+            this.synchronous = true;
+        } else {
+            this.synchronous = Boolean.parseBoolean(synchronous);
+        }
+        log.info("synchronous: {}", this.synchronous);
     }
 
     /**
@@ -58,7 +65,9 @@ public class Application {
                     var quoted = quote(message);
                     log.debug("Quoted to: {}", quoted);
                     send(quoted);
-                    consumer.commitSync();
+                    if (synchronous) {
+                        consumer.commitSync();
+                    }
                 }
             }
         } catch (WakeupException e) {
@@ -84,11 +93,13 @@ public class Application {
     private void send(String msg) {
         ProducerRecord<Void, String> record = new ProducerRecord<>(OUTPUT_TOPIC, null, msg);
         Future<RecordMetadata> future = producer.send(record);
-        try {
-            future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Something went wrong while waiting for the message to be completely sent to Kafka. Shutting down the app...", e);
-            System.exit(1);
+        if (synchronous) {
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Something went wrong while waiting for the message to be completely sent to Kafka. Shutting down the app...", e);
+                System.exit(1);
+            }
         }
     }
 

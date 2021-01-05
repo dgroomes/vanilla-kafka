@@ -11,8 +11,7 @@ import java.util.Properties;
 /**
  * Simulate load by generating many Kafka messages. See the README for more info.
  *
- * TODO configure and parameterize the producer compression
- * TODO produce to the same "input topic"
+ * TODO parameterize the producer compression
  */
 public class Main {
 
@@ -80,6 +79,7 @@ public class Main {
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("compression.type", "lz4");
 
         return new KafkaProducer<>(props);
     }
