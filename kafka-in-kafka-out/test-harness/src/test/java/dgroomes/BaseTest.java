@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -56,10 +57,12 @@ public class BaseTest {
      * to poll it once as an initialization step.
      */
     @BeforeAll
-    public void beforeAll() {
+    public void beforeAll() throws ExecutionException, InterruptedException {
         consumer.assign(List.of(OUTPUT_TOPIC_PARTITION));
-        log.debug("[beforeAll] Polling the Kafka consumer to jump start it");
-        consumer.poll(POLL_DURATION);
+        log.debug("Sending a message and polling for it to jump start the Kafka broker and the consumer (I don't understand)");
+        send("initializing test message");
+        consumer.poll(Duration.ofMillis(0));
+        consumer.poll(Duration.ofMillis(0));
     }
 
     /**
@@ -84,19 +87,31 @@ public class BaseTest {
 
     /**
      * Consume from the output Kafka topic.
-     * @return all messages consumed from the topic.
+     *
+     * There are a couple of quirks when it comes to reading all the messages from the Kafka topic.
+     * <p>
+     *   1. For one, we need to make sure that the 'app' program has had enough time to execute it's own processing. If
+     *      we check for messages on the Kafka broker before 'app' has sent any messages then we'll find no messages. So,
+     *      we 'Thread.sleep'.
+     *   2. For some reason which I don't understand, the 'poll' method sometimes doesn't fetch any data even when there
+     *      are for sure messages in the broker. So, I'll execute multiple polls. I think two is fine.
      */
-    protected List<ConsumerRecord<Void,String>> consume() {
+    protected List<ConsumerRecord<Void,String>> consume() throws InterruptedException {
+        Thread.sleep(3000);
         log.debug("Consuming from the output topic via a call to 'poll'");
-        ConsumerRecords<Void, String> records = consumer.poll(POLL_DURATION);
-        var specificRecords = records.records(OUTPUT_TOPIC_PARTITION);
-        log.debug("Found {} messages after polling", specificRecords.size());
+        var records = new ArrayList<ConsumerRecord<Void,String>>();
 
-        for (ConsumerRecord<Void, String> record : specificRecords) {
+        for (int i = 0; i < 2; i++) {
+            ConsumerRecords<Void, String> polledRecords = consumer.poll(POLL_DURATION);
+            log.debug("Found {} messages after polling", polledRecords.count());
+            records.addAll(polledRecords.records(OUTPUT_TOPIC_PARTITION));
+        }
+
+        for (ConsumerRecord<Void, String> record : records) {
             log.debug("Message: {}", record.value());
         }
 
-        return specificRecords;
+        return records;
     }
 
     /**

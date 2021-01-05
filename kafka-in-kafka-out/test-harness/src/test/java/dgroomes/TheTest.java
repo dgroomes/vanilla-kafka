@@ -1,11 +1,15 @@
 package dgroomes;
 
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TheTest extends BaseTest {
 
     /**
@@ -16,13 +20,13 @@ public class TheTest extends BaseTest {
      * and published a quoted version of the input message. Assert te contents of the output message.
      */
     @Test
+    @Order(1)
     void quote() throws Exception {
         // Arrange
         var msg = "Did you say \"hello\"?";
 
         // Act
         send(msg);
-        Thread.sleep(200);
 
         // Assert
         var records = consume();
@@ -35,6 +39,7 @@ public class TheTest extends BaseTest {
      * Send a unique message and assert that it shows up on the output Kafka topic.
      */
     @Test
+    @Order(2)
     void identity() throws Exception {
         // Arrange
         var time = LocalTime.now();
@@ -42,7 +47,6 @@ public class TheTest extends BaseTest {
 
         // Act
         send(uniqueMsg);
-        Thread.sleep(200);
 
         // Assert
         var records = consume();

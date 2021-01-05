@@ -34,5 +34,6 @@ tasks {
 }
 
 application {
+
     mainClass.set("dgroomes.kafkaplayground.interactive.Main")
 }
