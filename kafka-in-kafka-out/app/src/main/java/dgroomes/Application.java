@@ -54,9 +54,9 @@ public class Application {
                 ConsumerRecords<Void, String> records = consumer.poll(pollDuration);
                 for (ConsumerRecord<Void, String> record : records) {
                     var message = record.value();
-                    log.info("Got message: {}", message);
+                    log.debug("Got message: {}", message);
                     var quoted = quote(message);
-                    log.info("Quoted to: {}", quoted);
+                    log.debug("Quoted to: {}", quoted);
                     send(quoted);
                     consumer.commitSync();
                 }

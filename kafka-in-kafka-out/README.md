@@ -16,6 +16,8 @@ This is a multi-module Gradle project with the following sub-projects:
 * `test-harness/`
   * This is a [test harness](https://en.wikipedia.org/wiki/Test_harness) for running and executing automated tests against `app`.
   * See [test-harness/README.md](test-harness/README.md).
+* `load-simulator/`
+  * Simulate load by generate many Kafka messages
 
 ### Instructions
 
@@ -25,15 +27,36 @@ This is a multi-module Gradle project with the following sub-projects:
   * `brew install kafkacat`
 * Running the application and the `test-harness` depend on a locally running Kafka instance. Start Zookeeper and Kafka
   with:
-  * `scripts/start-kafka.sh`
+  * `./scripts/start-kafka.sh`
 * In a new terminal, build and run the `app` program with:
   * `./gradlew app:run`
 * In a new terminal, build and run the tests with:
   * `./gradlew test-harness:test`
 * Stop Kafka with:
-  * `scripts/stop-kafka.sh`
+  * `./scripts/stop-kafka.sh`
 
-### Wish List
+### Simulate load
+
+There is an additional sub-project named `load-simulator/` that will simulate load against the Kafka cluster by generating
+many messages and producing them to the same Kafka topic that `app/` consumes: "input-text". Build and run the load
+simulator with:
+
+```
+./gradlew load-simulator:run --args "10_000_000"
+```
+
+The integer argument is the number of messages that it will generate. After it's done, you can see the volume of data that
+was actually persisted in the the Kafka broker's data directory:
+
+```
+du -h /usr/local/var/lib/kafka-logs/input-text-0/
+du -h /usr/local/var/lib/kafka-logs/quoted-text-0/
+```
+
+Ideally, I'd like to try to different compression options and see how this effects the ultimate size of the data on disk.
+Furthermore, I could experiment with different settings on the consumer side too.
+
+### Wish list
 
 Items I wish to implement for this project:
 

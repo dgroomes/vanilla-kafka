@@ -1,3 +1,3 @@
 rootProject.name = "kafka-in-kafka-out"
 
-include("app", "test-harness")
+include("app", "test-harness", "load-simulator")
