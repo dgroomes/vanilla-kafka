@@ -20,42 +20,42 @@ An interactive program to consume from Kafka using the _plain-ole'/regular/vanil
 **TIP**: This is a good project to start with you if you are just learning about Kafka, or more specifically you are
 learning how to interface with Kafka via a Java program.
 
-See [interactive/README.md](interactive/README.md). 
+See the README in [interactive/](interactive/). 
 
 ### `kafka-in-kafka-out/`
 
 A simple *Kafka in, Kafka out* Java program accompanied by an out-of-process test harness.
 
-See [kafka-in-kafka-out/README.md](kafka-in-kafka-out/README.md).
+See the README in [kafka-in-kafka-out/](kafka-in-kafka-out/).
 
 ### `streams/`
 
 A basic [Kafka Streams](https://kafka.apache.org/documentation/streams/) application.
 
-See [streams/README.md](streams/README.md).
+See the README in [streams/](streams/).
 
 ### `spring-seekable/`
 
 A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application with a "seekable" Kafka listener.
 
-See [spring-seekable/README.md](spring-seekable/README.md).
+See the README in [spring-seekable/](spring-seekable/).
 
 ### `spring-headers/`
 
 A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that showcases the Spring framework behavior
 around Kafka message headers.
 
-See [spring-headers/README.md](spring-headers/README.md).
+See the README in [spring-headers/](spring-headers/).
 
 ### `spring-errors/`
 
 A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that showcases the Spring framework features
 and behavior around Kafka error handling.
 
-See [spring-errors/README.md](spring-errors/README.md).
+See the README in [spring-errors/](spring-errors/).
 
 ### `utility-scripts/`
 
 Utility Bash scripts for starting and stopping Kafka and Zookeeper.
 
-See [utility-scripts/README.md](utility-scripts/README.md).
+See the README in [utility-scripts/](utility-scripts/).
