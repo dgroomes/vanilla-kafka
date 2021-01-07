@@ -45,6 +45,11 @@ public class Messages {
         config.put("bootstrap.servers", "localhost:9092");
         config.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         config.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        /*
+         * Restrict the max number of records to poll so we can more easily recreate consumer lag, for educational
+         * purposes. Understanding lag is a key part to designing a successful system around Kafka.
+         */
+        config.put("max.poll.records", 10);
         consumer = new KafkaConsumer<>(config);
     }
 
@@ -69,6 +74,7 @@ public class Messages {
         try {
             while (active.get()) {
                 ConsumerRecords<Void, String> records = consumer.poll(pollDuration);
+                log.trace("Found {} records after poll", records.count());
                 for (ConsumerRecord<Void, String> record : records) {
                     String message = record.value();
                     action.accept(message);

@@ -23,7 +23,23 @@ public class Application {
      * (Non-blocking) Start the application
      */
     void start() {
-        messages = new Messages(msg -> log.info("Got message: {}", msg));
+        messages = new Messages(msg -> {
+            log.info("Got message: {}. Simulating some processing logic by sleeping for a short duration...", msg);
+            try {
+                /*
+                 * Simulate some time that it would take for processing to occur on this message. For example, an application
+                 * might key off of some identifying information in the message and use it to make an API to find additional
+                 * information. Then, it might be do some computation with all the data. Then, it might insert the
+                 * computed data into a database. This takes time, so let's simulate the processing time.
+                 *
+                 * By simulating processing time we can more easily recreate Kafka consumer lag. Use the `currentOffsets`
+                 * shell command while there is lag and you'll see the exact lag value in action.
+                 */
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                log.error("Something went wrong while sleeping to simulate message processing logic.");
+            }
+        });
         messages.start();
     }
 

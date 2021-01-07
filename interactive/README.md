@@ -54,3 +54,8 @@ A neat trick to check for processes that are using a port is to use the `lsof` c
 ```echo "zookeeper port?" && lsof -i :2181; echo "kafka port?" && lsof -i :9092```
 
 to check if Zookeeper and/or Kafka are running. 
+
+### Referenced materials
+
+* [Official Java docs: *Monitoring and Management Using JMX Technology*](https://docs.oracle.com/en/java/javase/11/management/monitoring-and-management-using-jmx-technology.html)
+* [Kafka consumer config](https://kafka.apache.org/documentation.html#consumerconfigs)
