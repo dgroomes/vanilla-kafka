@@ -38,12 +38,15 @@ commands. Commands include:
   * `consume` consume from the `my-messages` Kafka topic
   * `produce` produce a test message to the `my-messages` Kafka topic 
   * `currentOffsets` get current Kafka topic offsets for the `my-group` group 
-  
-### todo
+
+### Wish list
+
+General clean ups, TODOs and things I wish to implement for this project:
 
   * Should prefer using interrupts to stop KafkaConsumer? Even though KafkaConsumer recommends
     using a flag? See <https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html>
-    
+  * Implement a command to list Kafka client side metrics  
+
 ### Notes
 
 A neat trick to check for processes that are using a port is to use the `lsof` command. For example, use

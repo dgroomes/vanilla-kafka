@@ -38,27 +38,46 @@ public class Application {
      * (Blocking) Accept input from standard input.
      */
     void acceptInput() throws IOException, InterruptedException {
+        printUsage();
+        var reader = new BufferedReader(new InputStreamReader(System.in));
+        String command;
+        while ((command = reader.readLine()) != null) {
+            switch (command) {
+                case CMD_START:
+                    messages.start();
+                    break;
+                case CMD_STOP:
+                    messages.stop();
+                    break;
+                case CMD_RESET:
+                    messages.reset();
+                    break;
+                case CMD_REWIND:
+                    messages.rewind(5);
+                    break;
+                case CMD_CURRENT_OFFSETS:
+                    messages.currentOffsets();
+                    break;
+                default:
+                    if (command.isBlank()) {
+                        log.warn("Nothing was entered. Please enter a supported command.");
+                    } else {
+                        log.warn("command '{}' not recognized", command);
+                    }
+                    printUsage();
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Print usage information.
+     */
+    private void printUsage() {
         log.info("Enter '{}' to start consuming from Kafka", CMD_START);
         log.info("Enter '{}' to stop consuming from Kafka", CMD_STOP);
         log.info("Enter '{}' to reset Kafka offsets to the beginning", CMD_RESET);
         log.info("Enter '{}' to rewind Kafka offsets by a few spots", CMD_REWIND);
         log.info("Enter '{}' to get current Kafka offsets", CMD_CURRENT_OFFSETS);
-        var reader = new BufferedReader(new InputStreamReader(System.in));
-        String command;
-        while ((command = reader.readLine()) != null) {
-            if (command.equals(CMD_START)) {
-                messages.start();
-            } else if (command.equals(CMD_STOP)) {
-                messages.stop();
-            } else if (command.equals(CMD_RESET)) {
-                messages.reset();
-            } else if (command.equals(CMD_REWIND)) {
-                messages.rewind(5);
-            } else if (command.equals(CMD_CURRENT_OFFSETS)) {
-                messages.currentOffsets();
-            } else {
-                log.info("command '{}' not recognized", command);
-            }
-        }
     }
 }
