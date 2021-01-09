@@ -21,6 +21,6 @@ public class ExploratoryTest {
 
         var obj = objectMapper.readValue(json, Message.class);
 
-        assertEquals("1", obj.time);
+        assertEquals(1, obj.time);
     }
 }
