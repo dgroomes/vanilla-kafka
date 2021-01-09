@@ -1,12 +1,10 @@
 # spring-seekable
 
-WARNING: DOES NOT ACTUALLY SEEK CORRECTLY!
-
 A basic Spring Kafka application with a "seekable" Kafka listener.
 
 ---
 
-In essence, the Kafka listener base class has operations to seek to the beginning or end of the 
+In essence, the Kafka listener base class has operations to seek to the beginning or end (not implemented) of the 
 Kafka topic. This is a useful feature when executing tests or when needing to replay all Kafka 
 messages from the beginning of a Kafka topic.
 
@@ -22,7 +20,7 @@ messages from the beginning of a Kafka topic.
 * In a new terminal, produce some test data with `produce`. You should see the application react with new logs. Next,
   try `produce 10`.
 * In the application terminal, press "enter" to seek the consumer to the beginning of the topic. It should replay all 
-  the messages on the topic. WARNING: Unfortunately this doesn't work. It has no effect. No messages get re-processed.
+  the messages on the topic.
 
 ### `commands.sh`
 
@@ -40,8 +38,8 @@ commands. Commands include:
   
 ### TODO
 
-  * Why doesn't this work? It appears to seek to the beginning but no messages get printed out that indicate any
+  * DONE (wow, it was my bad all along! i never cleared the queue). Why doesn't this work? It appears to seek to the beginning but no messages get printed out that indicate any
     messages were actually re-processed.
-  * Shorten the shutdown hook timeout. It is by default 30 seconds. If you stop Kafka while the app is still running,
+  * OBSOLETE (fixed with queue thing) Shorten the shutdown hook timeout. It is by default 30 seconds. If you stop Kafka while the app is still running,
     then when you go to shut down the app it will take 30 seconds to shut down.
-  * The test is flaky.
+  * DONE (fixed with queue thing)The test is flaky.

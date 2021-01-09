@@ -18,13 +18,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
-class MessagesTest {
+class ListenerTest {
 
     @Autowired
     KafkaTemplate<?, String> kafkaTemplate;
 
     @Autowired
-    Messages messages;
+    Listener listener;
 
     /**
      * Send a test message and assert that it is consumed by the app
@@ -32,12 +32,14 @@ class MessagesTest {
     @Test
     @Timeout(10)
     void sendAndReceive() throws ExecutionException, InterruptedException {
+        var consumedMessagesBefore = listener.consumedMessages();
         long now = Instant.now().getEpochSecond();
         String msg = String.format("hello: %d", now);
 
         kafkaTemplate.sendDefault(msg).get();
-        String found = messages.take();
+        Thread.sleep(1000);
 
-        assertThat(found).isEqualTo(msg);
+        int consumedMessagesAfter = listener.consumedMessages();
+        assertThat(consumedMessagesAfter).isEqualTo(consumedMessagesBefore + 1);
     }
 }

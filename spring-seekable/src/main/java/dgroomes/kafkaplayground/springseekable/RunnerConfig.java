@@ -19,15 +19,15 @@ public class RunnerConfig {
      * Modeled after https://docs.spring.io/spring-kafka/docs/2.2.7.RELEASE/reference/html/#seek
      */
     @Bean
-    public ApplicationRunner runner(Messages messages) {
+    public ApplicationRunner runner(Listener listener) {
         return args -> {
-            messages.await();
+            listener.await();
             log.info("Press enter/return to seek to the beginning of the Kafka topic");
             //noinspection InfiniteLoopStatement
             while (true) {
                 //noinspection ResultOfMethodCallIgnored
                 System.in.read();
-                messages.seekToStart();
+                listener.seekToStart();
             }
         };
     }
