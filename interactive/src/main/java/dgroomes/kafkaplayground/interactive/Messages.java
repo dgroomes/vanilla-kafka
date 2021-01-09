@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
+import org.apache.kafka.common.metrics.KafkaMetric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,7 @@ public class Messages {
          * purposes. Understanding lag is a key part to designing a successful system around Kafka.
          */
         config.put("max.poll.records", 10);
+        config.put("metric.reporters", Metrics.class.getName());
         consumer = new KafkaConsumer<>(config);
     }
 
@@ -76,6 +78,7 @@ public class Messages {
                 ConsumerRecords<Void, String> records = consumer.poll(pollDuration);
                 log.trace("Found {} records after poll", records.count());
                 for (ConsumerRecord<Void, String> record : records) {
+                    log.trace("Found record: {}", record);
                     String message = record.value();
                     action.accept(message);
                     consumer.commitSync();
@@ -164,6 +167,21 @@ public class Messages {
             operation.run();
             if (needsStart) {
                 start();
+            }
+        }
+    }
+
+    /**
+     * Print the current Kafka consumer lag. This will print lag for all topic-partitions.
+     */
+    public void lag() {
+        var lagMetrics = Metrics.metricsMap.getOrDefault(Metrics.METRIC_LAG, null);
+
+        if (lagMetrics == null) {
+            log.info("Did not find a metric value for '{}'", Metrics.METRIC_LAG);
+        } else {
+            for (KafkaMetric topicPartitionLag : lagMetrics) {
+                log.info("Kafka consumer lag ('{}'): {}", topicPartitionLag.metricName(), topicPartitionLag.metricValue());
             }
         }
     }

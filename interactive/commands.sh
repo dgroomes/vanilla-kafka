@@ -43,3 +43,10 @@ consume() {
 produce() {
   "$INTERACTIVE_ROOT_DIR"/scripts/produce.sh $@
 }
+
+# Create the Kafka topic with N number of partitions. You should experiment with varying numbers of partitions to see
+# how the app behaves. Especially pay attention to the different between one partition and two partitions (more than two
+# won't be very interesting).
+createTopic() {
+  "$INTERACTIVE_ROOT_DIR"/scripts/create-topic.sh $@
+}

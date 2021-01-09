@@ -14,6 +14,7 @@ public class Application {
     private static final String CMD_RESET = "reset";
     private static final String CMD_REWIND = "rewind";
     private static final String CMD_CURRENT_OFFSETS = "current-offsets";
+    private static final String CMD_LAG = "lag";
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -24,7 +25,7 @@ public class Application {
      */
     void start() {
         messages = new Messages(msg -> {
-            log.info("Got message: {}. Simulating some processing logic by sleeping for a short duration...", msg);
+            log.info("Got message: {}", msg);
             try {
                 /*
                  * Simulate some time that it would take for processing to occur on this message. For example, an application
@@ -74,6 +75,9 @@ public class Application {
                 case CMD_CURRENT_OFFSETS:
                     messages.currentOffsets();
                     break;
+                case CMD_LAG:
+                    messages.lag();
+                    break;
                 default:
                     if (command.isBlank()) {
                         log.warn("Nothing was entered. Please enter a supported command.");
@@ -95,5 +99,6 @@ public class Application {
         log.info("Enter '{}' to reset Kafka offsets to the beginning", CMD_RESET);
         log.info("Enter '{}' to rewind Kafka offsets by a few spots", CMD_REWIND);
         log.info("Enter '{}' to get current Kafka offsets", CMD_CURRENT_OFFSETS);
+        log.info("Enter '{}' to get the current Kafka consumer lag", CMD_LAG);
     }
 }
