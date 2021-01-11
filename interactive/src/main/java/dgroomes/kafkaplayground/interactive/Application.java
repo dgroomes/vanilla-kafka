@@ -18,13 +18,13 @@ public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    private Messages messages;
+    private Listener listener;
 
     /**
      * (Non-blocking) Start the application
      */
     void start() {
-        messages = new Messages(msg -> {
+        listener = new Listener(msg -> {
             log.info("Got message: {}", msg);
             try {
                 /*
@@ -41,14 +41,14 @@ public class Application {
                 log.error("Something went wrong while sleeping to simulate message processing logic.");
             }
         });
-        messages.start();
+        listener.start();
     }
 
     /**
      * Stop the application.
      */
     void stop() throws InterruptedException {
-        messages.stop();
+        listener.stop();
     }
 
     /**
@@ -61,22 +61,22 @@ public class Application {
         while ((command = reader.readLine()) != null) {
             switch (command) {
                 case CMD_START:
-                    messages.start();
+                    listener.start();
                     break;
                 case CMD_STOP:
-                    messages.stop();
+                    listener.stop();
                     break;
                 case CMD_RESET:
-                    messages.reset();
+                    listener.reset();
                     break;
                 case CMD_REWIND:
-                    messages.rewind(5);
+                    listener.rewind(5);
                     break;
                 case CMD_CURRENT_OFFSETS:
-                    messages.currentOffsets();
+                    listener.currentOffsets();
                     break;
                 case CMD_LAG:
-                    messages.lag();
+                    listener.lag();
                     break;
                 default:
                     if (command.isBlank()) {

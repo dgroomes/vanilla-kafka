@@ -19,12 +19,13 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * Abstraction over messages sourced from the Kafka topic "my-messages
+ * This class listens to incoming messages from the Kafka topic "my-messages" and is configurable with an "action" to perform
+ * for each message. It has controls to stop, start and rewind and it captures some basic metrics.
  */
-public class Messages {
+public class Listener {
 
     public static final String MY_MESSAGES_TOPIC = "my-messages";
-    private static final Logger log = LoggerFactory.getLogger(Messages.class);
+    private static final Logger log = LoggerFactory.getLogger(Listener.class);
 
     private final KafkaConsumer<Void, String> consumer;
 
@@ -39,7 +40,7 @@ public class Messages {
     /**
      * @param action execute for each message received from the Kafka topic
      */
-    public Messages(Consumer<String> action) {
+    public Listener(Consumer<String> action) {
         this.action = action;
         Properties config = new Properties();
         config.put("group.id", "my-group");
