@@ -17,16 +17,19 @@ repositories {
 dependencies {
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     /**
-     *  For some reason if I don't specify the version in the "kafka-clients" dependency, then the app fails at runtime
-     *  with:
+     * Normally, we would not need to declare a dependency on 'kafka-clients' because it is required transitively via
+     * 'spring-kafka' but there is a defect in version 2.6.0 of 'kafka-clients'. See https://issues.apache.org/jira/browse/KAFKA-10384
+     * So, we need to depend on a specific version to avoid 2.6.0.
      *
-     *     ClassNotFoundException: com.fasterxml.jackson.databind.JsonNode
+     * Note: when the combination of Spring Boot and Spring for Apache Kafka upgrade to a version of 'kafka-clients' newer
+     * than 2.6.0 then this explicit version declaration can be deleted. In fact, please delete it!
      *
-     *  Why? Shouldn't the dependency resolution cause Jackson to be included? Also, why does "kafka-clients" even need
-     *  to be specified if "spring-kafka" is included? Doesn't "spring-kafka" bring in "kafka-clients" as a transitive
-     *  dependency?
      */
-    implementation("org.apache.kafka:kafka-clients:$kafkaClientVersion")
+    implementation("org.apache.kafka:kafka-clients") {
+        version {
+            strictly("2.6.1")
+        }
+    }
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.kafka:spring-kafka")
 
