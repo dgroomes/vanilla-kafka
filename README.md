@@ -54,6 +54,15 @@ and behavior around Kafka error handling.
 
 See the README in [spring-errors/](spring-errors/).
 
+### `spring-interfaces/`
+
+NOT YET IMPLEMENTED
+
+A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that demonstrates how to use Spring Kafka
+by implementing Spring Kafka interfaces instead of using annotations like `KafkaListener`.
+
+See the README in [spring-interfaces/](spring-interfaces/).
+
 ### `utility-scripts/`
 
 Utility Bash scripts for starting and stopping Kafka and Zookeeper.

@@ -9,5 +9,6 @@ tasks.register("assembleAll") {
     dependsOn(gradle.includedBuild("spring-errors").task(":assemble"))
     dependsOn(gradle.includedBuild("spring-headers").task(":assemble"))
     dependsOn(gradle.includedBuild("spring-seekable").task(":assemble"))
+    dependsOn(gradle.includedBuild("spring-headers").task(":assemble"))
     dependsOn(gradle.includedBuild("streams").task(":assemble"))
 }
