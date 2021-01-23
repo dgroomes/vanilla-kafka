@@ -4,9 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.adapter.ConsumerRecordMetadata;
-import org.springframework.stereotype.Component;
 
-@Component
 public class Listener {
 
     private static final Logger log = LoggerFactory.getLogger(Listener.class);

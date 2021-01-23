@@ -18,7 +18,7 @@ by implementing Spring Kafka interfaces instead of using annotations like `Kafka
 * In a new terminal, build and run the program with:
   * `./gradlew run`
 * In a new terminal, produce some test Kafka messages with:
-  * `./scripts/produce.sh`
+  * `./scripts/produce.sh 3`
 * Look at the app logs! The app will be processing the messages.
 * Stop Kafka with:
   * `./scripts/stop-kafka.sh`
@@ -27,4 +27,5 @@ by implementing Spring Kafka interfaces instead of using annotations like `Kafka
 
 General clean ups, TODOs and things I wish to implement for this project:
 
-* IN PROGRESS Remove Spring Boot and just focus on learning Spring Kafka
+* DONE Remove Spring Boot and just focus on learning Spring Kafka
+* Try to wire up the Spring Kafka objects programmtically instead of relying on the annotations (i.e. EnableKafka and @KafkaListener) 
