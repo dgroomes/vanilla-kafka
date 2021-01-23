@@ -1,6 +1,6 @@
 # spring-interfaces
 
-NOT YET IMPLEMENTED
+WORK IN PROGRESS
 
 A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that demonstrates how to use Spring Kafka
 by implementing Spring Kafka interfaces instead of using annotations like `KafkaListener`.
@@ -22,3 +22,9 @@ by implementing Spring Kafka interfaces instead of using annotations like `Kafka
 * Look at the app logs! The app will be processing the messages.
 * Stop Kafka with:
   * `./scripts/stop-kafka.sh`
+
+### Wish list
+
+General clean ups, TODOs and things I wish to implement for this project:
+
+* IN PROGRESS Remove Spring Boot and just focus on learning Spring Kafka
