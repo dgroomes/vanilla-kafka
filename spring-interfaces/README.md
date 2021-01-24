@@ -29,4 +29,4 @@ General clean ups, TODOs and things I wish to implement for this project:
 
 * DONE Remove Spring Boot and just focus on learning Spring Kafka
 * DONE Try to wire up the Spring Kafka objects programmtically instead of relying on the annotations (i.e. EnableKafka and @KafkaListener) 
-* Can I remove the Spring app context entirely and just use the most useful parts of the 'spring-kafka' library directly? 
+* DONE Can I remove the Spring app context entirely and just use the most useful parts of the 'spring-kafka' library directly? 

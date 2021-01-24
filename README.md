@@ -56,7 +56,7 @@ See the README in [spring-errors/](spring-errors/).
 
 ### `spring-interfaces/`
 
-NOT YET IMPLEMENTED
+WORK IN PROGRESS
 
 A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that demonstrates how to use Spring Kafka
 by implementing Spring Kafka interfaces instead of using annotations like `KafkaListener`.

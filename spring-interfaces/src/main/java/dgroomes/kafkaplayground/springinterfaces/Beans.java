@@ -2,8 +2,6 @@ package dgroomes.kafkaplayground.springinterfaces;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
@@ -12,15 +10,12 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
 public class Beans {
 
     /**
      * KafkaMessageListenerContainer is the kernel of the "Spring for Apache Kafka" library (at least from my vantage
      * point). It is an effective abstraction over the Java Kafka client library.
-     * @return
      */
-    @Bean
     public KafkaMessageListenerContainer<Void, String> kafkaMessageListenerContainer() {
         ContainerProperties containerProperties = new ContainerProperties("my-messages");
         containerProperties.setMessageListener(listener());
