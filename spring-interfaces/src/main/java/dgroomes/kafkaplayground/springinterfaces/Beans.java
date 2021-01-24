@@ -4,26 +4,30 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@EnableKafka
 public class Beans {
 
+    /**
+     * KafkaMessageListenerContainer is the kernel of the "Spring for Apache Kafka" library (at least from my vantage
+     * point). It is an effective abstraction over the Java Kafka client library.
+     * @return
+     */
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<Integer, String> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        return factory;
+    public KafkaMessageListenerContainer<Void, String> kafkaMessageListenerContainer() {
+        ContainerProperties containerProperties = new ContainerProperties("my-messages");
+        containerProperties.setMessageListener(listener());
+        return new KafkaMessageListenerContainer<>(consumerFactory(), containerProperties);
     }
 
-    public ConsumerFactory<Integer, String> consumerFactory() {
+    public ConsumerFactory<Void, String> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
     }
 
@@ -36,7 +40,6 @@ public class Beans {
         return props;
     }
 
-    @Bean
     public Listener listener() {
         return new Listener();
     }
