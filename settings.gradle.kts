@@ -25,7 +25,7 @@ rootProject.name = "kafka-playground"
 includeBuild("interactive")
 includeBuild("kafka-in-kafka-out")
 includeBuild("streams")
+includeBuild("spring-barebones")
 includeBuild("spring-errors")
 includeBuild("spring-headers")
 includeBuild("spring-seekable")
-includeBuild("spring-interfaces")

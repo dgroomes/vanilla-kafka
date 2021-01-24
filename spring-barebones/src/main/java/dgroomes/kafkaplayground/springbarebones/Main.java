@@ -1,4 +1,4 @@
-package dgroomes.kafkaplayground.springinterfaces;
+package dgroomes.kafkaplayground.springbarebones;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -46,7 +46,7 @@ public class Main {
     public static Map<String, Object> consumerConfigs() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "spring-interfaces-group");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "spring-barebones-group");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         return props;

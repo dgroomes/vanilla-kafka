@@ -54,14 +54,11 @@ and behavior around Kafka error handling.
 
 See the README in [spring-errors/](spring-errors/).
 
-### `spring-interfaces/`
+### `spring-barebones/`
 
-WORK IN PROGRESS
+A simple Java program to process messages from a Kafka topic using abstractions from [Spring for Apache Kafka](https://spring.io/projects/spring-kafka).
 
-A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that demonstrates how to use Spring Kafka
-by implementing Spring Kafka interfaces instead of using annotations like `KafkaListener`.
-
-See the README in [spring-interfaces/](spring-interfaces/).
+See the README in [spring-barebones/](spring-barebones/).
 
 ### `utility-scripts/`
 

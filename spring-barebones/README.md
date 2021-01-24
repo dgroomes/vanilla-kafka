@@ -1,11 +1,14 @@
-# spring-interfaces
+# spring-barebones
 
-WORK IN PROGRESS
-
-A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application that demonstrates how to use Spring Kafka
-by implementing Spring Kafka interfaces instead of using annotations like `KafkaListener`.
+A simple Java program to process messages from a Kafka topic using abstractions from [Spring for Apache Kafka](https://spring.io/projects/spring-kafka).
 
 ---
+
+### Description
+
+This project is named "-barebones" because it doesn't actually create a Spring application context but rather codes directly
+to the essential APIs provided by Spring for Apache Kafka. In this way, we opt-out of software machinery like the `@EnableKafka`
+annotation which lets us focus on the core APIs.
 
 ### Instructions
 

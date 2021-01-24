@@ -19,7 +19,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("dgroomes.kafkaplayground.springinterfaces.Main")
+    mainClass.set("dgroomes.kafkaplayground.springbarebones.Main")
 }
 
 tasks {
