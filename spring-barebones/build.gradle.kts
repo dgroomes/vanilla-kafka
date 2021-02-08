@@ -7,7 +7,7 @@ val slf4jVersion = "1.7.30" // releases: http://www.slf4j.org/news.html
 val springKafkaVersion = "2.6.5" // releases: https://spring.io/projects/spring-kafka#learn
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {

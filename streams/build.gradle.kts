@@ -9,7 +9,7 @@ val junitJupiterVersion = "5.7.0" // releases: https://junit.org/junit5/docs/cur
 val jacksonVersion = "2.11.2" // releases: https://github.com/FasterXML/jackson/wiki/Jackson-Releases
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {

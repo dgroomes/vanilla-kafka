@@ -2,13 +2,13 @@ val slf4jVersion = "1.7.30" // releases: http://www.slf4j.org/news.html
 val kafkaClientVersion = "2.5.0" // releases: https://kafka.apache.org/downloads
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 subprojects {
     apply(plugin = "java")
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
