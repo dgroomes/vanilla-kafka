@@ -10,9 +10,11 @@ subProjects=(
 'spring-headers'
 'spring-seekable'
 'streams'
+'ssl-tls-security'
 )
 
 for i in "${subProjects[@]}"; do
+    mkdir -p "../$i/scripts"
     cp start-kafka.sh "../$i/scripts"
     cp stop-kafka.sh "../$i/scripts"
 done
