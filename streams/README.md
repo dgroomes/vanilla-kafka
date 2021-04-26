@@ -53,7 +53,13 @@ Items I wish to implement for this project:
   * implement some tests
   * Make the Gradle files more idiomatic. There is so much to learn about Gradle and the Gradle Kotlin DSL! Without 
     knowing it, I can't make the Gradle files idiomatic. Fortunately, there is a lot of knowledge and advice in the 
-    official docs <https://docs.gradle.org/current/userguide/kotlin_dsl.html> 
+    official docs <https://docs.gradle.org/current/userguide/kotlin_dsl.html>
+  * Why, when starting the app, does it log a few hundred warning logs like this:
+    ```
+    00:23:45 [streams-wordcount-ec294eef-3f5a-401b-8b69-45084bc07506-StreamThread-10] WARN org.apache.kafka.clients.NetworkClient - [Consumer clientId=streams-wordcount-ec294eef-3f5a-401b-8b69-45084bc07506-StreamThread-10-consumer, groupId=streams-wordcount] Error while fetching metadata with correlation id 106 : {streams-wordcount-KSTREAM-AGGREGATE-STATE-STORE-0000000006-repartition=UNKNOWN_TOPIC_OR_PARTITION}
+    ```
+    Was it always like this? Is this normal? Is the out-of-the-box Kafka Streams operational experience always full of
+    verbose warning logs? Is this a KRaft issue? 
     
 ### Notes
 
