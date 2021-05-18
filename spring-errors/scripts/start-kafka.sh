@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Start Kafka using KRaft (Kafka Raft). With KRaft, Zookeeper is not needed!
+# Start Kafka using KRaft mode (Kafka Raft). With KRaft, Zookeeper is not needed!
 #
 # Assumes that Kafka is installed. I installed Kafka with `brew install kafka`.
 #
 # TIP: Adjust log levels as needed using the "log4j.properties" file. Then look at the logs in "tmp-kafka/logs/". It will
-# be a lot of information but with some determination it is an effective way to learn and experiment with Kafka.
+# be a lot of information but with some determination it is an effective way to learn and experiment with Kafka!
 #
 # NOTE: This is not an idiomatic way to run Kafka. This was my best attempt to script out a way to run Kafka for local
 # development.

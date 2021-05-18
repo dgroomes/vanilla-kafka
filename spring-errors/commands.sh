@@ -2,12 +2,12 @@
 
 export SPRING_ERRORS_ROOT_DIR=$(pwd)
 
-# Start Kafka and Zookeeper
+# Start Kafka
 startKafka() {
   "$SPRING_ERRORS_ROOT_DIR"/scripts/start-kafka.sh $@
 }
 
-# Stop Kafka and Zookeeper
+# Stop Kafka
 stopKafka() {
   "$SPRING_ERRORS_ROOT_DIR"/scripts/stop-kafka.sh $@
 }

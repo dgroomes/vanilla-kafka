@@ -62,6 +62,6 @@ See the README in [spring-barebones/](spring-barebones/).
 
 ### `utility-scripts/`
 
-Utility Bash scripts for starting and stopping Kafka and Zookeeper.
+Utility Bash scripts for starting and stopping Kafka.
 
 See the README in [utility-scripts/](utility-scripts/).

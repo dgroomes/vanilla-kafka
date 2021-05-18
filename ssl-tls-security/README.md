@@ -112,7 +112,7 @@ Miscellaneous notes and commands:
     * As is, this cert is not useful because it is not signed by the root certificate. Remember, the root certificate is
       the only thing we trust implicitly (it is a "trust anchor") while the Kafka broker's certificate will be trusted
       thanks, to math! We *derive* trust in the Kafka broker's cert because it will be signed by the root cert. 
-* Start Zookeeper and Kafka (TODO enable SSL):
+* Start Kafka (TODO enable SSL):
     * `./scripts/start-kafka.sh`
 * Start a Kafka consumer:
     * TODO
@@ -120,7 +120,7 @@ Miscellaneous notes and commands:
     * TODO
     * Verify that you see it in the consumer!
     * Success!
-* Stop Zookeeper and Kafka:
+* Stop Kafka:
     * `./scripts/stop-kafka.sh`
 
 ## Reference Materials

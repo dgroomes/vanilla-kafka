@@ -16,7 +16,7 @@ message headers. This project aims to de-mystify and illuminate that behavior. L
   * `brew install kafka`
   * `brew install kafkacat`
 * Running the application and the test cases depend on a locally running Kafka instance. Use the `startKafka` and 
-  `stopKafka` commands (see [`commands.sh`](#commandssh)) to run Kafka and Zookeeper.
+  `stopKafka` commands (see [`commands.sh`](#commandssh)) to run Kafka.
 * In a new terminal, build and run the program with `build && run`
 * In a new terminal, produce some test data with `produceMessageA`. You should see the application react with new logs.
 
@@ -25,8 +25,8 @@ message headers. This project aims to de-mystify and illuminate that behavior. L
 Source the `commands.sh` file using `source commands.sh` which will load your shell with useful 
 commands. Commands include:
 
-  * `startKafka` start Kafka and Zookeeper
-  * `stopKafka` stop Kafka and Zookeeper
+  * `startKafka` start Kafka
+  * `stopKafka` stop Kafka
   * `build` build (without tests)
   * `run` run the app
   * `produceMessageA` produce a test message to the `my-messages` Kafka topic for the "MessageA" type 

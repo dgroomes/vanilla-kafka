@@ -1,28 +1,39 @@
 # streams
 
-Learning and exploring Kafka Streams <https://kafka.apache.org/documentation/streams/>.
+A basic [Kafka Streams](https://kafka.apache.org/documentation/streams/) application.
 
----
+## Description
 
-This project is adapted from <https://github.com/dgroomes/vanilla-kafka> and <https://kafka.apache.org/25/documentation/streams/quickstart>.
-
-It illuminates the threading model of Kafka Streams by sleeping for each input message. For example, if ten messages are
+This demo app illuminates the threading model of Kafka Streams by sleeping for each input message. For example, if ten messages are
 input, and the Kafka Streams topology is bound by one thread, then it will take ten seconds to process the messages. By
 contrast, if the input Kafka topic has five partitions and the Kafka Streams app is configured with five threads, then
 it should take as little as two seconds to process the messages! Experiment with different configurations of the input
 topic, Kafka Streams topology operations, and Kafka Streams configurations.   
 
-### Instructions
+## Instructions
 
-* Use Java 11.
-* Running the application and the test cases depend on a locally running Kafka instance. Use the `startKafka` and 
-  `stopKafka` commands (see [`commands.sh`](#commandssh)) to run Kafka and Zookeeper.
-* In a new terminal, create the input and output Kafka topics with `createTopics`
-* Build and run with `build && run`
-* In a new terminal, start consuming the output Kafka topic with `consume` (you won't see anything until you start 
-  producing!)
-* In a new terminal, produce some test data with `produce`. You should see some data in your consumer! Next, try 
-  `produce 10`. Continue to experiment!   
+1. Use Java 11
+1. Start Kafka
+   *  Read [`commands.sh`](#commandssh) and then execute the following command:
+   * `startKafka`
+1. Create the topics
+   * Open a new terminal and create the input and output Kafka topics with the following command:
+   * `createTopics`
+1. Build and run the program:
+   * `build && run`
+1. Produce and consume messages
+   * In a new terminal, start a consumer process which will eventually receive messages on the output Kafka topic. Use
+     the following command:
+   * `consume`
+   * In a new terminal, produce some test data with the following command:
+   * `produce`
+   * You should see some data in your consumer!
+1. Produce even more messages:
+   * `produce 10`
+1. Continue to experiment!
+1. Stop Kafka
+   * When you are done, stop Kafka with the following command:
+   * `stopKafka`
 
 ### `commands.sh`
 
@@ -34,8 +45,8 @@ commands. Commands include:
   * `consume` consume from the `my-messages` Kafka topic
   * `produce` produce a test message to the `my-messages` Kafka topic 
   * `currentOffsets` get current Kafka topic offsets for the `my-group` group 
-  * `startKafka` start Kafka and Zookeeper
-  * `stopKafka` stop Kafka and Zookeeper
+  * `startKafka` start Kafka
+  * `stopKafka` stop Kafka
   * `createTopics` create the input and output Kafka topics 
   * `cleanState` clean the Kafka Streams state directory (RocksDB data) for when things get messed up  
   
@@ -61,10 +72,15 @@ Items I wish to implement for this project:
     Was it always like this? Is this normal? Is the out-of-the-box Kafka Streams operational experience always full of
     verbose warning logs? Is this a KRaft issue? 
     
-### Notes
+## Notes
 
 A neat trick to check for processes that are using a port is to use the `lsof` command. For example, use
 
-```echo "zookeeper port?" && lsof -i :2181; echo "kafka port?" && lsof -i :9092```
+```echo "kafka port?" && lsof -i :9092```
 
-to check if Zookeeper and/or Kafka are running. 
+to check if Kafka is running. 
+
+## Reference
+
+* [Apache Kafka: Quick Start *Demo Application*](https://kafka.apache.org/25/documentation/streams/quickstart)
+  * This project is adapted, in part, by the quick start

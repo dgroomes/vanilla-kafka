@@ -2,12 +2,12 @@
 
 export SEEKABLE_KAFKA_ROOT_DIR=$(pwd)
 
-# Start Kafka and Zookeeper
+# Start Kafka
 startKafka() {
   "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/start-kafka.sh $@
 }
 
-# Stop Kafka and Zookeeper
+# Stop Kafka
 stopKafka() {
   "$SEEKABLE_KAFKA_ROOT_DIR"/scripts/stop-kafka.sh $@
 }

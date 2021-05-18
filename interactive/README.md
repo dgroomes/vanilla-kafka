@@ -18,7 +18,7 @@ Kafka client.
   * `brew install kafka`
   * `brew install kafkacat`
 * Running the application and the test cases depend on a locally running Kafka instance. Use the `startKafka` and 
-  `stopKafka` commands (see [`commands.sh`](#commandssh)) to run Kafka and Zookeeper.
+  `stopKafka` commands (see [`commands.sh`](#commandssh)) to run Kafka.
 * In a new terminal, build and run the program with `build && run`
 * In a new terminal, produce some test data with `produce`. You should see the application react with new logs. Next,
   try `produce 10`.
@@ -30,8 +30,8 @@ Kafka client.
 Source the `commands.sh` file using `source commands.sh` which will load your shell with useful 
 commands. Commands include:
 
-  * `startKafka` start Kafka and Zookeeper
-  * `stopKafka` stop Kafka and Zookeeper
+  * `startKafka` start Kafka
+  * `stopKafka` stop Kafka
   * `createTopic` create the Kafka topic
   * `build` build (without running the tests)
   * `runTests` run the tests
@@ -52,9 +52,9 @@ General clean ups, TODOs and things I wish to implement for this project:
 
 A neat trick to check for processes that are using a port is to use the `lsof` command. For example, use
 
-```echo "zookeeper port?" && lsof -i :2181; echo "kafka port?" && lsof -i :9092```
+```echo "kafka port?" && lsof -i :9092```
 
-to check if Zookeeper and/or Kafka are running. 
+to check if Kafka is running. 
 
 ### Referenced materials
 

@@ -25,8 +25,7 @@ This is a multi-module Gradle project with the following sub-projects:
 * Install Kafka and `kafkacat`:
   * `brew install kafka`
   * `brew install kafkacat`
-* Running the application and the `test-harness` depend on a locally running Kafka instance. Start Zookeeper and Kafka
-  with:
+* Running the application and the `test-harness` depend on a locally running Kafka instance. Start Kafka with:
   * `./scripts/start-kafka.sh`
 * In a new terminal, build and run the `app` program with:
   * `./gradlew app:run`

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Produce test messages to the Kafka topic
-# Example to produce ten messages: ./produce.sh 10
+# For example, the following command will produce ten messages: ./produce.sh 10
 
 REPETITIONS=${1:-1}
 
