@@ -70,6 +70,9 @@ Items I wish to implement for this project:
     ```
     Was it always like this? Is this normal? Is the out-of-the-box Kafka Streams operational experience always full of
     verbose warning logs? Is this a KRaft issue? 
+  * Upgrade to Kafka 2.8.0. For some reason, the upgrade from 2.7.0 to 2.8.0 causes the app to break. It complains of corrupt
+    data when the app starts. I think the default location of the Kafka state store changed. I have to study the release
+    notes carefully.  
     
 ## Notes
 
