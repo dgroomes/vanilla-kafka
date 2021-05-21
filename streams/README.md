@@ -64,12 +64,22 @@ Items I wish to implement for this project:
   * Should prefer using interrupts to stop KafkaConsumer? Even though KafkaConsumer recommends
     using a flag? See <https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html>
   * implement some tests
-  * Why, when starting the app, does it log a few hundred warning logs like this:
+  * DONE (Answer: it's what happens when you rely on auto topic creation. The app has to stumble with the non-existing
+    topics for a while and then creates them. A bit awkward in my opinion). Why, when starting the app, does it log a
+    few hundred warning logs like this:
     ```
     00:23:45 [streams-wordcount-ec294eef-3f5a-401b-8b69-45084bc07506-StreamThread-10] WARN org.apache.kafka.clients.NetworkClient - [Consumer clientId=streams-wordcount-ec294eef-3f5a-401b-8b69-45084bc07506-StreamThread-10-consumer, groupId=streams-wordcount] Error while fetching metadata with correlation id 106 : {streams-wordcount-KSTREAM-AGGREGATE-STATE-STORE-0000000006-repartition=UNKNOWN_TOPIC_OR_PARTITION}
     ```
     Was it always like this? Is this normal? Is the out-of-the-box Kafka Streams operational experience always full of
-    verbose warning logs? Is this a KRaft issue? 
+    verbose warning logs? Is this a KRaft issue?
+  * Deal with this shutdown error
+    ```
+    ERROR org.apache.kafka.streams.processor.internals.StateDirectory - Some task directories still locked while closing state, this indicates unclean shutdown: {}
+    ```
+  * Is there an idiomatic way to figure out the intermediate/internal Kafka Streams topic names without actually running
+    the app and printing the topology? Is there something like a dry-run option? I want to know topic names, and then
+    create them before running the app. I do not want to rely an auto topic creation. I want *intentionality* with the
+    application in a similar way I don't use Hibernate to create SQL tables automatically. 
 
 ## Notes
 
