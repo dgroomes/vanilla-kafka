@@ -13,11 +13,14 @@ topic, Kafka Streams topology operations, and Kafka Streams configurations.
 ## Instructions
 
 1. Use Java 11
+1. Install Kafka and `kafkacat`:
+    * `brew install kafka`
+    * `brew install kafkacat`   
 1. Start Kafka
-   *  Read [`commands.sh`](#commandssh) and then execute the following command:
+   *  Read [`commands.sh`](#commandssh) and then execute the following command to start the Kafka broker:
    * `startKafka`
 1. Create the topics
-   * Open a new terminal and create the input and output Kafka topics with the following command to start the Kafka broker:
+   * Open a new terminal and create the input, intermediate, and output Kafka topics with the following command:
    * `createTopics`
 1. Build and run the program:
    * `build && run`
@@ -40,23 +43,8 @@ topic, Kafka Streams topology operations, and Kafka Streams configurations.
 ### `commands.sh`
 
 Source the `commands.sh` file using `source commands.sh` which will load your shell with useful 
-commands. Commands include:
+commands. Commands include: `build`, `startKafka` `run`, `consume` etc. See the contents of the file for more.
 
-  * `build` build (without running the tests)
-  * `run` run the app
-  * `consume` consume from the input Kafka topic
-  * `produce` produce a test message to the input Kafka topic 
-  * `currentOffsets` get current Kafka topic offsets for the `my-group` group 
-  * `startKafka` start Kafka
-  * `stopKafka` stop Kafka
-  * `createTopics` create the input and output Kafka topics 
-  * `cleanState` clean the Kafka Streams state directory (RocksDB data) for when things get messed up  
-  
-Dependencies required across all commands include:
-
-  * `brew install kafka`
-  * `brew install kafkacat`
-  
 ### Wish List
 
 Items I wish to implement for this project:
@@ -80,14 +68,6 @@ Items I wish to implement for this project:
     the app and printing the topology? Is there something like a dry-run option? I want to know topic names, and then
     create them before running the app. I do not want to rely an auto topic creation. I want *intentionality* with the
     application in a similar way I don't use Hibernate to create SQL tables automatically. 
-
-## Notes
-
-A neat trick to check for processes that are using a port is to use the `lsof` command. For example, use
-
-```echo "kafka port?" && lsof -i :9092```
-
-to check if Kafka is running. 
 
 ## Reference
 

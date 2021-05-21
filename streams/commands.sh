@@ -46,3 +46,8 @@ stopKafka() {
 cleanState() {
   rm -rf /tmp/kafka-streams/streams-wordcount/*
 }
+
+# A compound command to reset the Kafka broker and state
+reset() {
+ stopKafka && cleanState && startKafka && createTopics
+}
