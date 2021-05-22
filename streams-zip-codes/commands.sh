@@ -27,9 +27,17 @@ consumeInput() {
   "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/consume-input.sh
 }
 
-# Produce a test message to the Kafka topic
-produce() {
-  "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/produce.sh $@
+# Produce two ZIP areas for the city Springfield, MA to the input Kafka topic.
+# This function, in combination with produceSpringfield2() is useful as I test the incremental
+# merge functionality.
+produceSpringfield1() {
+  sed -n '48,49p' zips.json | kafkacat -P -b localhost:9092 -t streams-zip-codes-zip-areas
+}
+
+# Produce one more ZIP code for Springfield to the input Kafka topic.
+# See produceSpringfield1.
+produceSpringfield2() {
+  sed -n '50p' zips.json | kafkacat -P -b localhost:9092 -t streams-zip-codes-zip-areas
 }
 
 # Create the input and output Kafka topics

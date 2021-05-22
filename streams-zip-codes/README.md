@@ -30,6 +30,15 @@ is simple and the data is easily available.
     * `createTopics`
 1. Build and run the program:
     * `build && run`
+1. Produce and consume messages
+   * In a new terminal, start a consumer process which will eventually receive messages on the output Kafka topic. Use
+     the following command:
+   * `consume`
+   * In a new terminal, produce some test data with the following command:
+   * `produceSpringfield1`
+   * You should see some data in your consumer!
+   * Next, produce additional data with the following command and watch the consumer:
+   * `produceSpringfield2`
 1. Stop all components
     * When you are done, stop the Kafka consumer in the other terminal.
     * Stop the application in the other terminal.
@@ -46,8 +55,10 @@ commands. Commands include: `build`, `startKafka` `run`, `consume` etc. See the 
 * DONE Scaffold a compilable and runnable project
 * DONE Get rid of the repartitioning. I only want a baseline benchmark of a single partition. Keep things simple.
 * DONE the state store using in Java using the Kafka Streams client. This is more convenient than the Bash script
-* Get the Zip code data in
+* DONE Get the Zip code data into the project
 * Replace the copy/pasted word count stuff with zip code stuff
+* Parse the ZIP area data input message JSON
+* Aggregate into avg pop by cit
 
 ## Reference
 
