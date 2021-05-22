@@ -31,3 +31,11 @@ Copy the scripts to the other sub-projects with `./copy-scripts.sh`.
   * This release includes KIP-500 which brings experimental support for running Kafka without Zookeeper. I want to use
     this for local development so I can drop the Zookeeper configuration and the related scripting to handle starting and
     stopping it. This mode is called "KRaft mode". Read more about it in the [KRaft README](https://github.com/apache/kafka/blob/2.8/config/kraft/README.md).
+
+### Wish list
+
+General clean ups, TODOs and things I wish to implement for this project:
+
+* Add a wait loop in the stop script. I'm pretty sure Kafka takes a while to stop sometimes and if you kick off the stop
+  command without waiting for Kafka to come to a complete stop, then it's undefined what happens next if you execute other
+  commands in the mean time.

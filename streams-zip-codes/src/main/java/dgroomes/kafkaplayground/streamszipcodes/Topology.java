@@ -1,4 +1,4 @@
-package dgroomes.kafkaplayground.streams;
+package dgroomes.kafkaplayground.streamszipcodes;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
@@ -23,9 +23,9 @@ import java.util.Properties;
 public class Topology {
 
     private static final Logger log = LoggerFactory.getLogger(Topology.class);
-    public static final String INPUT_TOPIC = "plaintext-input";
-    public static final String STREAMS_INPUT_TOPIC = "streams-plaintext-input";
-    public static final String STREAMS_OUTPUT_TOPIC = "streams-wordcount-output";
+    public static final String INPUT_TOPIC = "zip-areas";
+    public static final String STREAMS_INPUT_TOPIC = "streams-zip-codes-zip-areas";
+    public static final String STREAMS_OUTPUT_TOPIC = "streams-zip-codes-avg-pop-by-city";
     public static final int INPUT_MESSAGE_SLEEP = 1000;
     private final KafkaStreams kafkaStreams;
 
@@ -41,7 +41,7 @@ public class Topology {
 
     static Properties getStreamsConfig() {
         final Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-wordcount");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-zip-codes");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());

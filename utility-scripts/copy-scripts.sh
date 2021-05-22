@@ -11,6 +11,7 @@ subProjects=(
 'spring-headers'
 'spring-seekable'
 'streams'
+'streams-zip-codes'
 'ssl-tls-security'
 )
 
