@@ -44,7 +44,7 @@ commands. Commands include: `build`, `startKafka` `run`, `consume` etc. See the 
 ## TODO
 
 * DONE Scaffold a compilable and runnable project
-* Get rid of the repartitioning. I only want a baseline benchmark of a single partition. Keep things simple.
+* DONE Get rid of the repartitioning. I only want a baseline benchmark of a single partition. Keep things simple.
 * Reset the state store using in Java using the Kafka Streams client. This is more convenient than the Bash script
 * Get the Zip code data in
 * Replace the copy/pasted word count stuff with zip code stuff

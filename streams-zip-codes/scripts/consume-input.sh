@@ -4,5 +4,5 @@
 set -eu
 
 kafka-console-consumer --bootstrap-server localhost:9092 \
-    --topic zip-areas \
+    --topic streams-zip-codes-zip-areas \
     --from-beginning

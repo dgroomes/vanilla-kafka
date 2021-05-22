@@ -9,25 +9,23 @@ createTopic() {
   local name="$1"
   shift
   kafka-topics --create \
+    --partitions 1 \
     --bootstrap-server localhost:9092 \
     --replication-factor 1 \
     --if-not-exists \
     --topic "$name" "${@}"
 }
 
-createTopic zip-areas --partitions 1
+createTopic streams-zip-codes-zip-areas
 
-createTopic streams-zip-codes-zip-areas --partitions 10
-
-createTopic streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000006-repartition \
-  --partitions 10 \
+# Explicitly create the internal topic that the Kafka Streams application uses. I prefer to not use auto topic creation.
+createTopic streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000004-repartition \
   --config cleanup.policy=delete \
   --config segment.bytes=52428800 \
   --config retention.ms=-1 \
   --config message.timestamp.type=CreateTime
 
 createTopic streams-zip-codes-avg-pop-by-city \
-  --partitions 1 \
   --config cleanup.policy=compact
 
 # Admire our work! Describe the Kafka topics (shows number of partitions and configurations)

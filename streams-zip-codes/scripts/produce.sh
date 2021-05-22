@@ -7,5 +7,5 @@ REPETITIONS=${1:-1}
 SECONDS=$(date +%s)
 
 for i in $(seq 1 $REPETITIONS); do
-  echo "hello! Iteration=$i Time=$SECONDS" | kafkacat -P -b localhost:9092 -t zip-areas
+  echo "hello! Iteration=$i Time=$SECONDS" | kafkacat -P -b localhost:9092 -t streams-zip-codes-zip-areas
 done

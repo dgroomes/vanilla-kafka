@@ -2,14 +2,12 @@ package dgroomes.kafkaplayground.streamszipcodes;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Utils;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Produced;
-import org.apache.kafka.streams.processor.StreamPartitioner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +21,8 @@ import java.util.Properties;
 public class Topology {
 
     private static final Logger log = LoggerFactory.getLogger(Topology.class);
-    public static final String INPUT_TOPIC = "zip-areas";
-    public static final String STREAMS_INPUT_TOPIC = "streams-zip-codes-zip-areas";
-    public static final String STREAMS_OUTPUT_TOPIC = "streams-zip-codes-avg-pop-by-city";
+    public static final String INPUT_TOPIC = "streams-zip-codes-zip-areas";
+    public static final String OUTPUT_TOPIC = "streams-zip-codes-avg-pop-by-city";
     public static final int INPUT_MESSAGE_SLEEP = 1000;
     private final KafkaStreams kafkaStreams;
 
@@ -60,18 +57,6 @@ public class Topology {
         final KStream<String, String> source = builder.stream(INPUT_TOPIC);
 
         final KTable<String, Long> counts = source
-                // Pass the plaintext-input topic data into a "streams-plaintext-input" topic which is configured with
-                // a higher number of partitions so we can get more concurrency out of the topology. We want the
-                // "streams-plaintext-input" to get messages produced to it with an even distribution across its
-                // partitions so we hash on the value to get an approximate even distribution for partition assignment.
-                .through(STREAMS_INPUT_TOPIC, Produced.streamPartitioner(new StreamPartitioner<String, String>() {
-                    @Override
-                    public Integer partition(String topic, String key, String value, int numPartitions) {
-                        var bytes = value.getBytes();
-                        // Similar to https://github.com/apache/kafka/blob/c6adcca95f03758089715c60e806a8090f5422d9/clients/src/main/java/org/apache/kafka/clients/producer/internals/DefaultPartitioner.java#L71
-                        return Utils.toPositive(Utils.murmur2(bytes)) % numPartitions;
-                    }
-                }))
                 .mapValues(value -> {
                     try {
                         log.info("Input message received: {}. Sleeping for {}ms", value, INPUT_MESSAGE_SLEEP);
@@ -86,7 +71,7 @@ public class Topology {
                 .count();
 
         // need to override value serde to Long type
-        counts.toStream().to(STREAMS_OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
+        counts.toStream().to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
     }
 
     /**
