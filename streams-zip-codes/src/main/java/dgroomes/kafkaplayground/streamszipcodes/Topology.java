@@ -34,6 +34,7 @@ public class Topology {
         var topology = builder.build();
         log.info("Initialized Kafka Streams topology to {}", topology.describe());
         kafkaStreams = new KafkaStreams(topology, props);
+        kafkaStreams.cleanUp();
     }
 
     static Properties getStreamsConfig() {

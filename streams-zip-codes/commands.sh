@@ -47,12 +47,7 @@ stopKafka() {
   "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/stop-kafka.sh $@
 }
 
-# Clean the Kafka Streams state directory (RocksDB data) for when things get messed up
-cleanState() {
-  rm -rf /tmp/kafka-streams/streams-zip-codes/*
-}
-
 # A compound command to reset the Kafka broker and state
 reset() {
- stopKafka && cleanState && startKafka && createTopics
+ stopKafka && startKafka && createTopics
 }

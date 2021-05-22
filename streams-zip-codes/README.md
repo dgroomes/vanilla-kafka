@@ -1,6 +1,6 @@
 # streams-zip-codes
 
-NOT YET IMPLEMENTED
+NOT YET FULLY IMPLEMENTED
 
 An intermediate Kafka Streams project that aggregates ZIP code data.
 
@@ -45,7 +45,10 @@ commands. Commands include: `build`, `startKafka` `run`, `consume` etc. See the 
 
 * DONE Scaffold a compilable and runnable project
 * DONE Get rid of the repartitioning. I only want a baseline benchmark of a single partition. Keep things simple.
-* Reset the state store using in Java using the Kafka Streams client. This is more convenient than the Bash script
+* DONE the state store using in Java using the Kafka Streams client. This is more convenient than the Bash script
 * Get the Zip code data in
 * Replace the copy/pasted word count stuff with zip code stuff
 
+## Reference
+
+* [Apache Kafka Streams: *Developer Guide*](https://kafka.apache.org/28/documentation/streams/developer-guide/)
