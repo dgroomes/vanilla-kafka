@@ -3,7 +3,6 @@ package dgroomes.kafkaplayground.streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -13,7 +12,7 @@ public class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) {
         log.info("Let's implement a basic Kafka Streams application and learn something in the process!");
 
         var topology = new Topology();
