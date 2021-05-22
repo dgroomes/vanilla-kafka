@@ -7,7 +7,6 @@ plugins {
 apply(plugin = "io.spring.dependency-management")
 
 val slf4jVersion = "1.7.30" // releases: http://www.slf4j.org/news.html
-val kafkaClientVersion = "2.7.0" // releases: https://kafka.apache.org/downloads
 
 repositories {
     mavenCentral()

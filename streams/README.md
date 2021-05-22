@@ -60,7 +60,7 @@ Items I wish to implement for this project:
     ```
     Was it always like this? Is this normal? Is the out-of-the-box Kafka Streams operational experience always full of
     verbose warning logs? Is this a KRaft issue?
-  * Deal with this shutdown error
+  * IN PROGRESS Deal with this shutdown error
     ```
     ERROR org.apache.kafka.streams.processor.internals.StateDirectory - Some task directories still locked while closing state, this indicates unclean shutdown: {}
     ```

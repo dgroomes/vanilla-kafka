@@ -1,4 +1,4 @@
-val junitJupiterVersion = "5.7.0" // releases: https://junit.org/junit5/docs/current/release-notes/index.html
+val junitJupiterVersion = "5.7.2" // releases: https://junit.org/junit5/docs/current/release-notes/index.html
 val assertJVersion = "3.18.1" // releases: https://github.com/assertj/assertj-core/releases
 
 tasks {
