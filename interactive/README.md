@@ -44,8 +44,6 @@ commands. Commands include:
 
 General clean ups, TODOs and things I wish to implement for this project:
 
-  * Should prefer using interrupts to stop KafkaConsumer? Even though KafkaConsumer recommends
-    using a flag? See <https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html>
   * DONE Implement a command to list Kafka client side metrics  
 
 ### Notes

@@ -49,8 +49,6 @@ commands. Commands include: `build`, `startKafka` `run`, `consume` etc. See the 
 
 Items I wish to implement for this project:
 
-  * Should prefer using interrupts to stop KafkaConsumer? Even though KafkaConsumer recommends
-    using a flag? See <https://kafka.apache.org/0110/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html>
   * implement some tests
   * DONE (Answer: it's what happens when you rely on auto topic creation. The app has to stumble with the non-existing
     topics for a while and then creates them. A bit awkward in my opinion). Why, when starting the app, does it log a
