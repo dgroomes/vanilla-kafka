@@ -19,7 +19,7 @@ createTopic() {
 createTopic streams-zip-codes-zip-areas
 
 # Explicitly create the internal topic that the Kafka Streams application uses. I prefer to not use auto topic creation.
-createTopic streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000004-repartition \
+createTopic streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000003-repartition \
   --config cleanup.policy=delete \
   --config segment.bytes=52428800 \
   --config retention.ms=-1 \

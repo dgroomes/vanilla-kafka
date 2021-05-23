@@ -56,8 +56,8 @@ commands. Commands include: `build`, `startKafka` `run`, `consume` etc. See the 
 * DONE Get rid of the repartitioning. I only want a baseline benchmark of a single partition. Keep things simple.
 * DONE the state store using in Java using the Kafka Streams client. This is more convenient than the Bash script
 * DONE Get the Zip code data into the project
+* DONE Parse the ZIP area data input message JSON
 * Replace the copy/pasted word count stuff with zip code stuff
-* Parse the ZIP area data input message JSON
 * Aggregate into avg pop by cit
 
 ## Reference

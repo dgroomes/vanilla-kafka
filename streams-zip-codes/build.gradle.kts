@@ -22,6 +22,10 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:$slf4jVersion")
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
     implementation("org.apache.kafka:kafka-streams:$kafkaVersion")
+    implementation(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+
+    // jackson-module-parameter names is needed to support deserializing to Java record classes
+    implementation("com.fasterxml.jackson.module:jackson-module-parameter-names")
 }
 
 application {

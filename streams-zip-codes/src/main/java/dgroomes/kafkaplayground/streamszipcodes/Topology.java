@@ -5,14 +5,13 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Produced;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -23,14 +22,13 @@ public class Topology {
     private static final Logger log = LoggerFactory.getLogger(Topology.class);
     public static final String INPUT_TOPIC = "streams-zip-codes-zip-areas";
     public static final String OUTPUT_TOPIC = "streams-zip-codes-avg-pop-by-city";
-    public static final int INPUT_MESSAGE_SLEEP = 1000;
     private final KafkaStreams kafkaStreams;
 
     public Topology() {
         final Properties props = getStreamsConfig();
 
         final StreamsBuilder builder = new StreamsBuilder();
-        createWordCountStream(builder);
+        configureStream(builder);
         var topology = builder.build();
         log.info("Initialized Kafka Streams topology to {}", topology.describe());
         kafkaStreams = new KafkaStreams(topology, props);
@@ -46,33 +44,26 @@ public class Topology {
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.STATE_DIR_CONFIG, "/tmp/kafka-streams");
         props.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 10);
-
-        // setting offset reset to earliest so that we can re-run the demo code with the same pre-loaded data
-        // Note: To re-run the demo, you need to use the offset reset tool:
-        // https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Streams+Application+Reset+Tool
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         return props;
     }
 
-    static void createWordCountStream(final StreamsBuilder builder) {
-        final KStream<String, String> source = builder.stream(INPUT_TOPIC);
+    private void configureStream(final StreamsBuilder builder) {
+        var zipAreaSerde = new JsonSerde<>(ZipArea.class);
+        KStream<String, ZipArea> source = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.String(), zipAreaSerde));
 
-        final KTable<String, Long> counts = source
-                .mapValues(value -> {
-                    try {
-                        log.info("Input message received: {}. Sleeping for {}ms", value, INPUT_MESSAGE_SLEEP);
-                        Thread.sleep(INPUT_MESSAGE_SLEEP);
-                    } catch (InterruptedException e) {
-                        log.error("Interrupted while sleeping", e);
-                    }
-                    return value;
+        KTable<String, Long> counts = source
+                .mapValues(zipArea -> {
+                    // Note: this is a do-nothing mapper. It is only used to log the incoming ZipArea data. It doesn't
+                    // actually map the incoming type to another type.
+                    log.trace("Input ZipArea message received: {}", zipArea);
+                    return zipArea;
                 })
-                .flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split(" ")))
-                .groupBy((key, value) -> value)
+                .groupBy((key, value) -> value._id(), Grouped.with(Serdes.String(), zipAreaSerde))
                 .count();
 
-        // need to override value serde to Long type
-        counts.toStream().to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
+        // Output the KTable to a stream.
+        counts.toStream().to(OUTPUT_TOPIC);
     }
 
     /**
