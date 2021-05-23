@@ -16,9 +16,9 @@ subProjects=(
 )
 
 for i in "${subProjects[@]}"; do
-    mkdir -p "../$i/scripts"
-    cp log4j.properties "../$i/scripts"
-    cp server.properties "../$i/scripts"
-    cp start-kafka.sh "../$i/scripts"
-    cp stop-kafka.sh "../$i/scripts"
+    DIR="../$i/scripts"
+    cp log4j.properties "$DIR"
+    cp server.properties "$DIR"
+    cp start-kafka.sh "$DIR"
+    cp stop-kafka.sh "$DIR"
 done
