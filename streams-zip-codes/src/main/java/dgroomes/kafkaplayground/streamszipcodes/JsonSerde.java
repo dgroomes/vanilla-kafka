@@ -1,6 +1,7 @@
 package dgroomes.kafkaplayground.streamszipcodes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
@@ -20,7 +21,7 @@ public class JsonSerde<T> implements Serde<T> {
     private final Serializer<T> serializer;
     private final Deserializer<T> deserializer;
 
-    public JsonSerde(Class<T> type) {
+    public JsonSerde(TypeReference<T> type) {
         var objectMapper = new ObjectMapper().registerModule(new ParameterNamesModule());
         // Don't fail on unknown properties. This is more conventional default behavior.
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

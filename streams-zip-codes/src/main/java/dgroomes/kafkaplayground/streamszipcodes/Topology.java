@@ -1,17 +1,17 @@
 package dgroomes.kafkaplayground.streamszipcodes;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.Grouped;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.Properties;
 
 /**
@@ -48,19 +48,50 @@ public class Topology {
         return props;
     }
 
+    /**
+     * Configure a stream that works like this:
+     * <p>
+     * 1. Reads from the ZIP areas Kafka topic
+     * 2. Re-key each message by its city-state pair
+     * 3. Group all ZIP areas by city-state into a collection
+     * 4. Compute the average ZIP area population by city
+     */
     private void configureStream(final StreamsBuilder builder) {
-        var zipAreaSerde = new JsonSerde<>(ZipArea.class);
+
+        // Pay the type and serialization tax with some boilerplate Jackson/Kafka serialization setup!
+        var zipAreaSerde = new JsonSerde<>(new TypeReference<ZipArea>() {
+        });
+        var cityStateSerde = new JsonSerde<>(new TypeReference<CityState>() {
+        });
+        var hashSetSerde = new JsonSerde<>(new TypeReference<HashSet<ZipArea>>() {
+        });
+
         KStream<String, ZipArea> source = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.String(), zipAreaSerde));
 
-        KTable<String, Long> counts = source
-                .mapValues(zipArea -> {
-                    // Note: this is a do-nothing mapper. It is only used to log the incoming ZipArea data. It doesn't
-                    // actually map the incoming type to another type.
+        KStream<CityState, ZipArea> keyed = source
+                .map((_cityState, zipArea) -> {
                     log.trace("Input ZipArea message received: {}", zipArea);
-                    return zipArea;
-                })
-                .groupBy((key, value) -> value._id(), Grouped.with(Serdes.String(), zipAreaSerde))
-                .count();
+                    var cityState = new CityState(zipArea.city(), zipArea.state());
+                    return new KeyValue<>(cityState, zipArea);
+                });
+
+        KGroupedStream<CityState, ZipArea> grouped = keyed.groupByKey(Grouped.with(cityStateSerde, zipAreaSerde));
+
+        KTable<CityState, HashSet<ZipArea>> collected = grouped
+                .aggregate(HashSet::new, (_cityState, zipArea, set) -> {
+                    set.add(zipArea);
+                    return set;
+                }, Materialized.with(cityStateSerde, hashSetSerde));
+
+        KTable<CityState, Integer> counts = collected
+                .mapValues(collection -> {
+                    @SuppressWarnings("OptionalGetWithoutIsPresent")
+                    var avg = collection.stream()
+                            .mapToInt(ZipArea::pop)
+                            .average()
+                            .getAsDouble();
+                    return (int) avg;
+                }, Materialized.with(cityStateSerde, Serdes.Integer()));
 
         // Output the KTable to a stream.
         counts.toStream().to(OUTPUT_TOPIC);

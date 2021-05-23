@@ -38,7 +38,7 @@ public class TheTest extends BaseTest {
     void identity() throws Exception {
         // Arrange
         var time = LocalTime.now();
-        var uniqueMsg = "The current time is: %s".formatted(time);
+        var uniqueMsg = String.format("The current time is: %s", time);
 
         // Act
         send(uniqueMsg);
@@ -48,7 +48,7 @@ public class TheTest extends BaseTest {
         var records = consume();
         assertThat(records).hasSize(1);
         var record = records.get(0);
-        var expected = "%s%s%s".formatted('"', uniqueMsg, '"');
+        var expected = String.format("%s%s%s", '"', uniqueMsg, '"');
         assertThat(record.value()).isEqualTo(expected);
     }
 }
