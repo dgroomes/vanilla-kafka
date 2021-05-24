@@ -81,10 +81,10 @@ Here is another development experience snippet. This is a runtime error.
 * DONE Get the Zip code data into the project
 * DONE Parse the ZIP area data input message JSON
 * DONE Aggregate into avg pop by city
-* Disable topic auto creation. I want the explicit feedback that "'xyz' topic does not exist" and I want the app to shut
+* SKIP (not feasible, i would have to enable SSL and then use ACLs) Disable topic auto creation. I want the explicit feedback that "'xyz' topic does not exist" and I want the app to shut
   down. I do not want the app to log 100+ warn log messages that the the topic does not exist, and then it eventually creates
   the topic automatically.
-* Is it possible to use explicitly named internal topics instead of the names like 'streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition'?
+* DONE (and in fact, Confluence recommends doing it: https://docs.confluent.io/platform/current/streams/developer-guide/dsl-topology-naming.html#changing-names) Is it possible to use explicitly named internal topics instead of the names like 'streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition'?
   I am already relying on manually created topics and so I have to know the topic names. So it's an opportunity to use meaningfully
   named topics with a word like "rekey" or "aggregate-to-collection" instead of the anonymously named 'streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition'.
 * De-duplicate the same ZIP area records

@@ -75,7 +75,7 @@ public class Topology {
                     return new KeyValue<>(cityState, zipArea);
                 });
 
-        KGroupedStream<CityState, ZipArea> grouped = keyed.groupByKey(Grouped.with(cityStateSerde, zipAreaSerde));
+        KGroupedStream<CityState, ZipArea> grouped = keyed.groupByKey(Grouped.with("keyed-by-city-state", cityStateSerde, zipAreaSerde));
 
         KTable<CityState, HashSet<ZipArea>> collected = grouped
                 .aggregate(HashSet::new, (_cityState, zipArea, set) -> {
