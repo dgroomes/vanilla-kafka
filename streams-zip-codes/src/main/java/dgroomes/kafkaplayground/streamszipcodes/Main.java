@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         log.info("This is an intermediate Kafka Streams application to aggregate ZIP code data!");
 
-        var topology = new Topology();
+        var topology = new App();
         final CountDownLatch latch = new CountDownLatch(1);
         Runtime.getRuntime().addShutdownHook(new Thread("streams-wordcount-shutdown-hook") {
             @Override

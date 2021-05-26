@@ -3,10 +3,7 @@ package dgroomes.kafkaplayground.streamszipcodes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,27 +12,25 @@ import java.util.HashSet;
 import java.util.Properties;
 
 /**
- * A toy implementation of a Kafka Streams topology. Designed for educational purposes!
+ * A Kafka Streams app
  */
-public class Topology {
+public class App {
 
-    private static final Logger log = LoggerFactory.getLogger(Topology.class);
+    private static final Logger log = LoggerFactory.getLogger(App.class);
     public static final String INPUT_TOPIC = "streams-zip-codes-zip-areas";
     public static final String OUTPUT_TOPIC = "streams-zip-codes-avg-pop-by-city";
     private final KafkaStreams kafkaStreams;
 
-    public Topology() {
-        final Properties props = getStreamsConfig();
+    public App() {
+        final Properties props = config();
+        Topology topology = topology();
+        log.info("Created a Kafka Streams topology:\n\n{}", topology.describe());
 
-        final StreamsBuilder builder = new StreamsBuilder();
-        configureStream(builder);
-        var topology = builder.build();
-        log.info("Initialized Kafka Streams topology to {}", topology.describe());
         kafkaStreams = new KafkaStreams(topology, props);
         kafkaStreams.cleanUp();
     }
 
-    static Properties getStreamsConfig() {
+    public static Properties config() {
         final Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-zip-codes");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -49,15 +44,15 @@ public class Topology {
     }
 
     /**
-     * Configure a stream that works like this:
+     * Create a topology that works like this:
      * <p>
      * 1. Reads from the ZIP areas Kafka topic
      * 2. Re-key each message by its city-state pair
      * 3. Group all ZIP areas by city-state into a collection
      * 4. Compute the average ZIP area population by city
      */
-    private void configureStream(final StreamsBuilder builder) {
-
+    public static Topology topology() {
+        var builder = new StreamsBuilder();
         // Pay the type and serialization tax with some boilerplate Jackson/Kafka serialization setup!
         var zipAreaSerde = new JsonSerde<>(new TypeReference<ZipArea>() {
         });
@@ -95,6 +90,8 @@ public class Topology {
 
         // Output the KTable to a stream.
         counts.toStream().to(OUTPUT_TOPIC);
+
+        return builder.build();
     }
 
     /**
