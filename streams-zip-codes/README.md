@@ -93,7 +93,9 @@ What is `class [B`?
 * DONE (and in fact, Confluence recommends doing it: https://docs.confluent.io/platform/current/streams/developer-guide/dsl-topology-naming.html#changing-names) Is it possible to use explicitly named internal topics instead of the names like 'streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition'?
   I am already relying on manually created topics and so I have to know the topic names. So it's an opportunity to use meaningfully
   named topics with a word like "rekey" or "aggregate-to-collection" instead of the anonymously named 'streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition'.
-* De-duplicate the same ZIP area records
+* DONE (This is already implemented because we're using keys) De-duplicate the same ZIP area records
+* Compute state-level ZIP area average population
+* Compute overall-level ZIP area average population
 
 ## Reference
 
