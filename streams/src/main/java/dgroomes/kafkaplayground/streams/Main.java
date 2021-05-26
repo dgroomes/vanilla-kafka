@@ -15,19 +15,19 @@ public class Main {
     public static void main(String[] args) {
         log.info("Let's implement a basic Kafka Streams application and learn something in the process!");
 
-        var topology = new Topology();
+        var app = new App();
         final CountDownLatch latch = new CountDownLatch(1);
         Runtime.getRuntime().addShutdownHook(new Thread("streams-wordcount-shutdown-hook") {
             @Override
             public void run() {
                 log.info("Stopping the topology");
-                topology.stop();
+                app.stop();
                 latch.countDown();
             }
         });
 
         try {
-            topology.start();
+            app.start();
             latch.await();
         } catch (final Throwable e) {
             log.error("Error. Did not shutdown as expected.", e);

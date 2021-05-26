@@ -73,6 +73,12 @@ Here is another development experience snippet. This is a runtime error.
 
 ![exception-screenshot.png](screenshots/exception-screenshot.png)
 
+Here is another one (actually from the 'streams/' sub-project) that happened when I tried adding the Kafka Streams test utils:
+
+![test-exception-screenshot.png](screenshots/test-exception-screenshot.png)
+
+What is `class [B`?
+
 ## TODO
 
 * DONE Scaffold a compilable and runnable project

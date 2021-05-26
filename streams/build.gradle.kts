@@ -5,8 +5,10 @@ plugins {
 
 val slf4jVersion = "1.7.30" // releases: http://www.slf4j.org/news.html
 val kafkaVersion = "2.8.0" // releases: https://kafka.apache.org/downloads
+
 val junitJupiterVersion = "5.7.2" // releases: https://junit.org/junit5/docs/current/release-notes/index.html
-val jacksonVersion = "2.12.3" // releases: https://github.com/FasterXML/jackson/wiki/Jackson-Releases
+val assertJVersion = "3.18.1" // releases: https://github.com/assertj/assertj-core/releases
+
 
 repositories {
     mavenCentral()
@@ -20,6 +22,8 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation("org.assertj:assertj-core:$assertJVersion")
+    testImplementation("org.apache.kafka:kafka-streams-test-utils:$kafkaVersion")
 }
 
 tasks {

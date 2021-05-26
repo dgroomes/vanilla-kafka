@@ -49,7 +49,7 @@ commands. Commands include: `build`, `startKafka` `run`, `consume` etc. See the 
 
 Items I wish to implement for this project:
 
-  * implement some tests
+  * DONE Implement some tests
   * DONE (Answer: it's what happens when you rely on auto topic creation. The app has to stumble with the non-existing
     topics for a while and then creates them. A bit awkward in my opinion). Why, when starting the app, does it log a
     few hundred warning logs like this:
@@ -71,3 +71,4 @@ Items I wish to implement for this project:
 
 * [Apache Kafka: Quick Start *Demo Application*](https://kafka.apache.org/25/documentation/streams/quickstart)
   * This project is adapted, in part, by the quick start
+* [Apache Kafka Streams: *Testing Kafka Streams*](https://kafka.apache.org/28/documentation/streams/developer-guide/testing.html)

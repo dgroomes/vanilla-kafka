@@ -6,6 +6,7 @@ import org.apache.kafka.common.utils.Utils;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Produced;
@@ -18,28 +19,27 @@ import java.util.Locale;
 import java.util.Properties;
 
 /**
- * A toy implementation of a Kafka Streams topology. Designed for educational purposes!
+ * A toy implementation of a Kafka Streams app. Designed for educational purposes!
  */
-public class Topology {
+public class App {
 
-    private static final Logger log = LoggerFactory.getLogger(Topology.class);
+    private static final Logger log = LoggerFactory.getLogger(App.class);
     public static final String INPUT_TOPIC = "plaintext-input";
     public static final String STREAMS_INPUT_TOPIC = "streams-plaintext-input";
     public static final String STREAMS_OUTPUT_TOPIC = "streams-wordcount-output";
     public static final int INPUT_MESSAGE_SLEEP = 1000;
+
     private final KafkaStreams kafkaStreams;
 
-    public Topology() {
-        final Properties props = getStreamsConfig();
+    public App() {
+        final Properties props = config();
+        Topology topology = topology();
+        log.info("Created a Kafka Streams topology:\n\n{}", topology.describe());
 
-        final StreamsBuilder builder = new StreamsBuilder();
-        createWordCountStream(builder);
-        var topology = builder.build();
-        log.info("Initialized Kafka Streams topology to {}", topology.describe());
         kafkaStreams = new KafkaStreams(topology, props);
     }
 
-    static Properties getStreamsConfig() {
+    public static Properties config() {
         final Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-wordcount");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -56,7 +56,11 @@ public class Topology {
         return props;
     }
 
-    static void createWordCountStream(final StreamsBuilder builder) {
+    /**
+     * Build a streams topology
+     */
+    static Topology topology() {
+        var builder = new StreamsBuilder();
         final KStream<String, String> source = builder.stream(INPUT_TOPIC);
 
         final KTable<String, Long> counts = source
@@ -87,6 +91,8 @@ public class Topology {
 
         // need to override value serde to Long type
         counts.toStream().to(STREAMS_OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
+
+        return builder.build();
     }
 
     /**
