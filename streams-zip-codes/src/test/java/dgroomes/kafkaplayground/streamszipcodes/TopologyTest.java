@@ -16,7 +16,7 @@ class TopologyTest {
 
     TopologyTestDriver driver;
     TestInputTopic<String, ZipArea> input;
-    TestOutputTopic<CityState, Integer> cityOutput;
+    TestOutputTopic<City, CityStats> cityOutput;
 
     @BeforeEach
     void before() {
@@ -25,10 +25,13 @@ class TopologyTest {
         var stringSerde = Serdes.String();
         var zipAreaSerde = new JsonSerde<>(new TypeReference<ZipArea>() {
         });
-        var cityStateSerde = new JsonSerde<>(new TypeReference<CityState>() {
+        var citySerde = new JsonSerde<>(new TypeReference<City>() {
         });
+        var cityStatsSerde = new JsonSerde<>(new TypeReference<CityStats>() {
+        });
+
         input = driver.createInputTopic("streams-zip-codes-zip-areas", stringSerde.serializer(), zipAreaSerde.serializer());
-        cityOutput = driver.createOutputTopic("streams-zip-codes-avg-pop-by-city", cityStateSerde.deserializer(), Serdes.Integer().deserializer());
+        cityOutput = driver.createOutputTopic("streams-zip-codes-city-stats-changelog", citySerde.deserializer(), cityStatsSerde.deserializer());
     }
 
     @AfterEach
@@ -47,10 +50,10 @@ class TopologyTest {
         var outputRecords = cityOutput.readRecordsToList();
 
         assertThat(outputRecords)
-                .map(record -> tuple(record.key(), record.value()))
+                .extracting("key", "value")
                 .containsExactly(
-                        tuple(new CityState("SPRINGFIELD", "MA"), 1),
-                        tuple(new CityState("SPRINGFIELD", "MA"), 2));
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(1, 1)),
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(2, 2)));
     }
 
     /**
@@ -60,15 +63,26 @@ class TopologyTest {
     void sameKeyUpdates() {
         input.pipeInput(new ZipArea("1", "SPRINGFIELD", "MA", 1));
         input.pipeInput(new ZipArea("2", "SPRINGFIELD", "MA", 3));
-        input.pipeInput(new ZipArea("3", "SPRINGFIELD", "MA", 1));
+        input.pipeInput(new ZipArea("2", "SPRINGFIELD", "MA", 1));
 
         var outputRecords = cityOutput.readRecordsToList();
 
         assertThat(outputRecords)
                 .map(record -> tuple(record.key(), record.value()))
                 .containsExactly(
-                        tuple(new CityState("SPRINGFIELD", "MA"), 1),
-                        tuple(new CityState("SPRINGFIELD", "MA"), 2),
-                        tuple(new CityState("SPRINGFIELD", "MA"), 1));
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(1, 1)),
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(2, 2)),
+
+                        // When the second ZIP area record for ZIP code 2 occurs, it is an "upsert". As such, this engages
+                        // the KTable's "subtractor" and "adder" operations which together make the effect of an upsert.
+                        // This was surprising to me, but I guess it makes sense. I would prefer if there was a way to
+                        // do proper upserts instead of separate delete ("subtractor") and insert ("adder") operations
+                        // because it creates this awkward effect where for a brief time the city statistics actually
+                        // goes backwards until the new value is added.
+                        //
+                        // I think there is a solution to this. I could research more. But also I think if I create a
+                        // KStream out of the KTable it might solve it. But I want to minimize the Kafka topics.
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(1, 1)),
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(2, 1)));
     }
 }

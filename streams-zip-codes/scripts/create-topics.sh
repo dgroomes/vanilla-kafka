@@ -21,7 +21,6 @@ createTopic() {
 
 # Create the input and output topics
 createTopic streams-zip-codes-zip-areas
-createTopic streams-zip-codes-avg-pop-by-city
 
 # Explicitly create the internal topic that the Kafka Streams application uses. I prefer to not use auto topic creation.
 createTopic streams-zip-codes-zip-areas-to-tabler-repartition \
