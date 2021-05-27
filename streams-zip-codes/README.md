@@ -96,6 +96,15 @@ What is `class [B`?
 * DONE (This is already implemented because we're using keys) De-duplicate the same ZIP area records
 * Compute state-level ZIP area average population
 * Compute overall-level ZIP area average population
+* DONE Use a KTable for zip area records because they represent a changelog stream and not an event stream. Read the Kafka
+  Streams docs on KStreams vs KTable, they are really good.
+
+### Wish List
+
+Items I wish to implement for this project:
+
+* Extract all Kafka Streams DSL operations into their own methods so that it is easier to visually trace the topology
+  code. It is easy to get lost in the Java types and the topology edges in the topology graph!
 
 ## Reference
 

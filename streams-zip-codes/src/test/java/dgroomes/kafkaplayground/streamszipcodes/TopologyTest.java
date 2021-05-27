@@ -16,7 +16,7 @@ class TopologyTest {
 
     TopologyTestDriver driver;
     TestInputTopic<String, ZipArea> input;
-    TestOutputTopic<CityState, Integer> output;
+    TestOutputTopic<CityState, Integer> cityOutput;
 
     @BeforeEach
     void before() {
@@ -28,7 +28,7 @@ class TopologyTest {
         var cityStateSerde = new JsonSerde<>(new TypeReference<CityState>() {
         });
         input = driver.createInputTopic("streams-zip-codes-zip-areas", stringSerde.serializer(), zipAreaSerde.serializer());
-        output = driver.createOutputTopic("streams-zip-codes-avg-pop-by-city", cityStateSerde.deserializer(), Serdes.Integer().deserializer());
+        cityOutput = driver.createOutputTopic("streams-zip-codes-avg-pop-by-city", cityStateSerde.deserializer(), Serdes.Integer().deserializer());
     }
 
     @AfterEach
@@ -37,14 +37,14 @@ class TopologyTest {
     }
 
     /**
-     * The topology should compute an average of ZIP area populations
+     * The topology should compute an average of ZIP area populations for each city
      */
     @Test
-    void average() {
+    void averageByCity() {
         input.pipeInput(new ZipArea("1", "SPRINGFIELD", "MA", 1));
         input.pipeInput(new ZipArea("2", "SPRINGFIELD", "MA", 3));
 
-        var outputRecords = output.readRecordsToList();
+        var outputRecords = cityOutput.readRecordsToList();
 
         assertThat(outputRecords)
                 .map(record -> tuple(record.key(), record.value()))
@@ -62,7 +62,7 @@ class TopologyTest {
         input.pipeInput(new ZipArea("2", "SPRINGFIELD", "MA", 3));
         input.pipeInput(new ZipArea("3", "SPRINGFIELD", "MA", 1));
 
-        var outputRecords = output.readRecordsToList();
+        var outputRecords = cityOutput.readRecordsToList();
 
         assertThat(outputRecords)
                 .map(record -> tuple(record.key(), record.value()))

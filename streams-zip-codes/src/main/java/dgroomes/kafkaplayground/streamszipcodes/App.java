@@ -61,24 +61,31 @@ public class App {
         var hashSetSerde = new JsonSerde<>(new TypeReference<HashSet<ZipArea>>() {
         });
 
-        KStream<String, ZipArea> source = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.String(), zipAreaSerde));
+        // Input. The input topic is not keyed.
+        KStream<Void, ZipArea> zipAreasNoKey = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Void(), zipAreaSerde));
 
-        KStream<CityState, ZipArea> keyed = source
-                .map((_cityState, zipArea) -> {
-                    log.trace("Input ZipArea message received: {}", zipArea);
-                    var cityState = new CityState(zipArea.city(), zipArea.state());
-                    return new KeyValue<>(cityState, zipArea);
-                });
+        // Key records on the input topic into a new topic. Kafka Streams requires keys!
+        KStream<CityState, ZipArea> zipAreas = zipAreasNoKey.map((_key, zipArea) -> {
+            var cityState = new CityState(zipArea.city(), zipArea.state());
+            return new KeyValue<>(cityState, zipArea);
+        });
 
-        KGroupedStream<CityState, ZipArea> grouped = keyed.groupByKey(Grouped.with("keyed-by-city-state", cityStateSerde, zipAreaSerde));
+        // Represent ZIP areas as a KTable. ZIP areas need to be represented as a changelog not as a record stream (KStream).
+        // ZIP areas are upserted over time, so we need a KTable.
+        KTable<CityState, ZipArea> zipAreasTable = zipAreas.toTable(Materialized.with(cityStateSerde, zipAreaSerde));
 
-        KTable<CityState, HashSet<ZipArea>> collected = grouped
-                .aggregate(HashSet::new, (_cityState, zipArea, set) -> {
-                    set.add(zipArea);
-                    return set;
-                }, Materialized.with(cityStateSerde, hashSetSerde));
+        // Group the ZIP areas by city
+        KGroupedTable<CityState, ZipArea> cityGrouped = zipAreasTable.groupBy(KeyValue::new);
+        KTable<CityState, HashSet<ZipArea>> cityAggregated = cityGrouped.aggregate(HashSet::new, (key, value, aggregate) -> {
+            aggregate.add(value);
+            return aggregate;
+        }, (key, value, aggregate) -> {
+            aggregate.remove(value);
+            return aggregate;
+        }, Materialized.with(cityStateSerde, hashSetSerde));
 
-        KTable<CityState, Integer> counts = collected
+        // Compute the city-level ZIP area population statistics
+        KTable<CityState, Integer> cityStats = cityAggregated
                 .mapValues(collection -> {
                     @SuppressWarnings("OptionalGetWithoutIsPresent")
                     var avg = collection.stream()
@@ -89,7 +96,7 @@ public class App {
                 }, Materialized.with(cityStateSerde, Serdes.Integer()));
 
         // Output the KTable to a stream.
-        counts.toStream().to(OUTPUT_TOPIC);
+        cityStats.toStream().to(OUTPUT_TOPIC);
 
         return builder.build();
     }
