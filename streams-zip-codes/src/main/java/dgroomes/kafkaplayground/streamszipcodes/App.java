@@ -3,8 +3,10 @@ package dgroomes.kafkaplayground.streamszipcodes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.state.KeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,36 +66,59 @@ public class App {
         // Input. The input topic is not keyed.
         KStream<Void, ZipArea> zipAreasNoKey = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Void(), zipAreaSerde));
 
-        // Key records on the input topic into a new topic. Kafka Streams requires keys!
-        KStream<CityState, ZipArea> zipAreas = zipAreasNoKey.map((_key, zipArea) -> {
-            var cityState = new CityState(zipArea.city(), zipArea.state());
-            return new KeyValue<>(cityState, zipArea);
-        });
+        // Key ZIP area records on the input topic by ZIP code and pipe to a new topic. Kafka Streams requires keys!
+        KStream<String, ZipArea> zipAreas = zipAreasNoKey.map(
+                (_key, zipArea) -> new KeyValue<>(zipArea._id(), zipArea),
+                Named.as("zip-areas-keyer"));
 
         // Represent ZIP areas as a KTable. ZIP areas need to be represented as a changelog not as a record stream (KStream).
         // ZIP areas are upserted over time, so we need a KTable.
-        KTable<CityState, ZipArea> zipAreasTable = zipAreas.toTable(Materialized.with(cityStateSerde, zipAreaSerde));
+        KTable<String, ZipArea> zipAreasTable = zipAreas.toTable(
+                Named.as("zip-areas-to-tabler"),
+                Materialized.<String, ZipArea, KeyValueStore<Bytes, byte[]>>as("zip-areas")
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(zipAreaSerde));
 
-        // Group the ZIP areas by city
-        KGroupedTable<CityState, ZipArea> cityGrouped = zipAreasTable.groupBy(KeyValue::new);
-        KTable<CityState, HashSet<ZipArea>> cityAggregated = cityGrouped.aggregate(HashSet::new, (key, value, aggregate) -> {
-            aggregate.add(value);
-            return aggregate;
-        }, (key, value, aggregate) -> {
-            aggregate.remove(value);
-            return aggregate;
-        }, Materialized.with(cityStateSerde, hashSetSerde));
+        // Group the ZIP areas by city.
+        //
+        // Think of SQL's "group by". A "group by" always has an accompanying aggregation and it's useful to think about
+        // the grouping and the aggregation in tandem. Look down a few lines at the "aggregate" statement.
+        KGroupedTable<CityState, ZipArea> cityGrouped = zipAreasTable.groupBy(
+                (key, value) -> new KeyValue<>(new CityState(value.city(), value.state()), value),
+                Grouped.<CityState, ZipArea>as("by-city")
+                        .withKeySerde(cityStateSerde)
+                        .withValueSerde(zipAreaSerde));
+        // Aggregate the grouped cities into a set.
+        KTable<CityState, HashSet<ZipArea>> cityAggregated = cityGrouped.aggregate(
+                HashSet::new,
+                (key, value, aggregate) -> {
+                    aggregate.add(value);
+                    return aggregate;
+                },
+                (key, value, aggregate) -> {
+                    aggregate.remove(value);
+                    return aggregate;
+                },
+                Named.as("by-city-aggregator"),
+                Materialized.<CityState, HashSet<ZipArea>, KeyValueStore<Bytes, byte[]>>as("by-city")
+                        .withKeySerde(cityStateSerde)
+                        .withValueSerde(hashSetSerde));
 
         // Compute the city-level ZIP area population statistics
         KTable<CityState, Integer> cityStats = cityAggregated
-                .mapValues(collection -> {
-                    @SuppressWarnings("OptionalGetWithoutIsPresent")
-                    var avg = collection.stream()
-                            .mapToInt(ZipArea::pop)
-                            .average()
-                            .getAsDouble();
-                    return (int) avg;
-                }, Materialized.with(cityStateSerde, Serdes.Integer()));
+                .mapValues(
+                        collection -> {
+                            @SuppressWarnings("OptionalGetWithoutIsPresent")
+                            var avg = collection.stream()
+                                    .mapToInt(ZipArea::pop)
+                                    .average()
+                                    .getAsDouble();
+                            return (int) avg;
+                        },
+                        Named.as("city-stats-computer"),
+                        Materialized.<CityState, Integer, KeyValueStore<Bytes, byte[]>>as("city-stats")
+                                .withKeySerde(cityStateSerde)
+                                .withValueSerde(Serdes.Integer()));
 
         // Output the KTable to a stream.
         cityStats.toStream().to(OUTPUT_TOPIC);

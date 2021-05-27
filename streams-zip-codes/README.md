@@ -98,6 +98,7 @@ What is `class [B`?
 * Compute overall-level ZIP area average population
 * DONE Use a KTable for zip area records because they represent a changelog stream and not an event stream. Read the Kafka
   Streams docs on KStreams vs KTable, they are really good.
+* DONE Fix ZIP area key. It should be keyed on ZIP code not city
 
 ### Wish List
 

@@ -14,18 +14,28 @@ createTopic() {
     --bootstrap-server localhost:9092 \
     --replication-factor 1 \
     --config segment.bytes="$FIFTY_MIB" \
+    --config message.timestamp.type=CreateTime \
     --if-not-exists \
     --topic "$name" "${@}"
 }
 
+# Create the input and output topics
 createTopic streams-zip-codes-zip-areas
+createTopic streams-zip-codes-avg-pop-by-city
 
 # Explicitly create the internal topic that the Kafka Streams application uses. I prefer to not use auto topic creation.
-createTopic streams-zip-codes-keyed-by-city-state-repartition \
-  --config retention.ms=-1 \
-  --config message.timestamp.type=CreateTime
+createTopic streams-zip-codes-zip-areas-to-tabler-repartition \
+  --config retention.ms=-1
 
-createTopic streams-zip-codes-avg-pop-by-city \
+createTopic streams-zip-codes-zip-areas-changelog \
+  --config cleanup.policy=compact
+
+createTopic streams-zip-codes-by-city-changelog \
+  --config cleanup.policy=compact
+
+createTopic streams-zip-codes-by-city-repartition
+
+createTopic streams-zip-codes-city-stats-changelog \
   --config cleanup.policy=compact
 
 # Admire our work! Describe the Kafka topics (shows number of partitions and configurations)
