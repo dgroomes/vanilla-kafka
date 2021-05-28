@@ -35,6 +35,7 @@ public class JsonSerde<T> implements Serde<T> {
         };
 
         this.deserializer = (topic, data) -> {
+            if (data == null) return null;
             try {
                 return objectMapper.readValue(data, type);
             } catch (IOException e) {

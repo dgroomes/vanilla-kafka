@@ -111,18 +111,18 @@ public class TopologyBuilder {
     private KTable<City, HashSet<ZipArea>> aggregateCities(KGroupedTable<City, ZipArea> cityGrouped) {
         return cityGrouped.aggregate(
                 HashSet::new,
-                (key, value, aggregate) -> {
-                    aggregate.add(value);
-                    return aggregate;
+                (city, zipArea, zipAreas) -> {
+                    zipAreas.add(zipArea);
+                    return zipAreas;
                 },
-                (key, value, aggregate) -> {
-                    aggregate.remove(value);
-                    return aggregate;
+                (city, zipArea, zipAreas) -> {
+                    zipAreas.remove(zipArea);
+                    return zipAreas;
                 },
                 Named.as("by-city-aggregator"),
                 Materialized.<City, HashSet<ZipArea>, KeyValueStore<Bytes, byte[]>>as("by-city")
                         .withKeySerde(citySerde)
-                        .withValueSerde(new JsonSerde<HashSet<ZipArea>>(new TypeReference<>() {
+                        .withValueSerde(new JsonSerde<>(new TypeReference<>() {
                         })));
     }
 
@@ -131,9 +131,12 @@ public class TopologyBuilder {
      */
     private KTable<City, CityStats> computeCityStats(KTable<City, HashSet<ZipArea>> cityAggregated) {
         return cityAggregated.mapValues(
-                zips -> {
-                    var numberZips = zips.size();
-                    var pop = zips.stream()
+                zipAreas -> {
+                    if (zipAreas.isEmpty()) {
+                        return null;
+                    }
+                    var numberZips = zipAreas.size();
+                    var pop = zipAreas.stream()
                             .mapToInt(ZipArea::pop)
                             .sum();
                     var avgPop = pop / numberZips;
@@ -162,18 +165,18 @@ public class TopologyBuilder {
     private KTable<String, HashSet<CityStats>> aggregateByState(KGroupedTable<String, CityStats> stateGrouped) {
         return stateGrouped.aggregate(
                 HashSet::new,
-                (state, stats, set) -> {
-                    set.add(stats);
+                (state, cityStats, set) -> {
+                    set.add(cityStats);
                     return set;
                 },
-                (state, stats, set) -> {
-                    set.remove(stats);
+                (state, cityStats, set) -> {
+                    set.remove(cityStats);
                     return set;
                 },
                 Named.as("by-state-aggregator"),
                 Materialized.<String, HashSet<CityStats>, KeyValueStore<Bytes, byte[]>>as("by-state")
                         .withKeySerde(Serdes.String())
-                        .withValueSerde(new JsonSerde<HashSet<CityStats>>(new TypeReference<>() {
+                        .withValueSerde(new JsonSerde<>(new TypeReference<>() {
                         })));
     }
 
@@ -182,16 +185,14 @@ public class TopologyBuilder {
      */
     private KTable<String, StateStats> computeStateStats(KTable<String, HashSet<CityStats>> stateAggregated) {
         return stateAggregated.mapValues(
-                set -> {
-                    // I have no idea why the "mapValues" operation is invoked if the set is empty. So, return
-                    // null to avoid a divide by zero exception later.
-                    if (set.isEmpty()) {
+                cityStats -> {
+                    if (cityStats.isEmpty()) {
                         return null;
                     }
-                    var numberZipAreas = set.stream()
+                    var numberZipAreas = cityStats.stream()
                             .mapToInt(CityStats::zipAreas)
                             .sum();
-                    var pop = set.stream()
+                    var pop = cityStats.stream()
                             .mapToInt(CityStats::totalPop)
                             .sum();
 
@@ -221,12 +222,13 @@ public class TopologyBuilder {
     private KTable<String, HashSet<StateStats>> aggregateOverall(KGroupedTable<String, StateStats> overallGrouped) {
         return overallGrouped.aggregate(
                 HashSet::new,
-                (key, value, aggregate) -> {
-                    aggregate.add(value);
-                    return aggregate;
-                }, (key, value, aggregate) -> {
-                    aggregate.remove(value);
-                    return aggregate;
+                (key, stateStats, set) -> {
+                    set.add(stateStats);
+                    return set;
+                },
+                (key, stateStats, set) -> {
+                    set.remove(stateStats);
+                    return set;
                 },
                 Named.as("overall-aggregator"),
                 Materialized.<String, HashSet<StateStats>, KeyValueStore<Bytes, byte[]>>as("overall")
@@ -241,24 +243,21 @@ public class TopologyBuilder {
     @SuppressWarnings("UnusedReturnValue")
     private KTable<String, OverallStats> computerOverallStats(KTable<String, HashSet<StateStats>> overallAggregated) {
         return overallAggregated.mapValues(
-                new ValueMapper<HashSet<StateStats>, OverallStats>() {
-                    @Override
-                    public OverallStats apply(HashSet<StateStats> set) {
-                        // There should only ever be zero or one, so the collection isn't really necessary. But I've implemented
-                        // it like this because it was easy.
-                        if (set.isEmpty()) {
-                            return null;
-                        }
-                        var numberZipAreas = set.stream()
-                                .mapToInt(StateStats::zipAreas)
-                                .sum();
-                        var pop = set.stream()
-                                .mapToInt(StateStats::totalPop)
-                                .sum();
-
-                        var avg = pop / numberZipAreas;
-                        return new OverallStats(numberZipAreas, pop, avg);
+                stateStats -> {
+                    // There should only ever be zero or one, so the collection isn't really necessary. But I've implemented
+                    // it like this because it was easy.
+                    if (stateStats.isEmpty()) {
+                        return null;
                     }
+                    var numberZipAreas = stateStats.stream()
+                            .mapToInt(StateStats::zipAreas)
+                            .sum();
+                    var pop = stateStats.stream()
+                            .mapToInt(StateStats::totalPop)
+                            .sum();
+
+                    var avg = pop / numberZipAreas;
+                    return new OverallStats(numberZipAreas, pop, avg);
                 },
                 Named.as("overall-stats-computer"),
                 Materialized.<String, OverallStats, KeyValueStore<Bytes, byte[]>>as("overall-stats")

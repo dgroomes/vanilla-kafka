@@ -108,7 +108,7 @@ Items I wish to implement for this project:
   the topology in such a way that, for example, all zip area records in "MA" (Massachusetts) are sourced from the same
   source topic partition? I know Kafka Streams doesn't know that a ZIP code always stays within the same state, but it's
   true. Can a custom partitioner implementation solve this?
-* More tests. Specifically, test same-key updates in the city aggregation without a leading ZIP area. I think we'll get
+* DONE More tests. Specifically, test same-key updates in the city aggregation without a leading ZIP area. I think we'll get
   the empty scenario that happens in the state aggregation.
 
 ## Reference
