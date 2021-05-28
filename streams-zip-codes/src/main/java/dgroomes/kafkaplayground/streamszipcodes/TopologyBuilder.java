@@ -63,7 +63,123 @@ public class TopologyBuilder {
         return builder.build();
     }
 
-    // Compute the state-level ZIP area population statistics
+    /**
+     * Input. The input topic is not keyed.
+     */
+    private KStream<Void, ZipArea> inputZips(StreamsBuilder builder) {
+        return builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Void(), zipAreaSerde));
+    }
+
+    /**
+     * Key ZIP area records on the input topic by ZIP code and pipe to a new topic. Kafka Streams requires keys!
+     */
+    private KStream<String, ZipArea> keyOnZipCode(KStream<Void, ZipArea> zipAreasNoKey) {
+        return zipAreasNoKey.map(
+                (_key, zipArea) -> new KeyValue<>(zipArea._id(), zipArea),
+                Named.as("zip-areas-keyer"));
+    }
+
+    /**
+     * Represent ZIP areas as a KTable. ZIP areas need to be represented as a changelog not as a record stream (KStream).
+     * ZIP areas are upserted over time, so we need a KTable.
+     */
+    private KTable<String, ZipArea> zipsToTable(KStream<String, ZipArea> zipAreas) {
+        return zipAreas.toTable(
+                Named.as("zip-areas-to-tabler"),
+                Materialized.<String, ZipArea, KeyValueStore<Bytes, byte[]>>as("zip-areas")
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(zipAreaSerde));
+    }
+
+    /**
+     * Group the ZIP areas by city.
+     * <p>
+     * Think of SQL's "group by". A "group by" always has an accompanying aggregation and it's useful to think about
+     * the grouping and the aggregation in tandem. Look down a few lines at the "aggregate" statement.
+     */
+    private KGroupedTable<City, ZipArea> groupByCity(KTable<String, ZipArea> zipAreasTable) {
+        return zipAreasTable.groupBy(
+                (key, value) -> new KeyValue<>(new City(value.city(), value.state()), value),
+                Grouped.<City, ZipArea>as("by-city")
+                        .withKeySerde(citySerde)
+                        .withValueSerde(zipAreaSerde));
+    }
+
+    /**
+     * Aggregate the grouped ZIP areas into a set.
+     */
+    private KTable<City, HashSet<ZipArea>> aggregateCities(KGroupedTable<City, ZipArea> cityGrouped) {
+        return cityGrouped.aggregate(
+                HashSet::new,
+                (key, value, aggregate) -> {
+                    aggregate.add(value);
+                    return aggregate;
+                },
+                (key, value, aggregate) -> {
+                    aggregate.remove(value);
+                    return aggregate;
+                },
+                Named.as("by-city-aggregator"),
+                Materialized.<City, HashSet<ZipArea>, KeyValueStore<Bytes, byte[]>>as("by-city")
+                        .withKeySerde(citySerde)
+                        .withValueSerde(new JsonSerde<HashSet<ZipArea>>(new TypeReference<>() {
+                        })));
+    }
+
+    /**
+     * Compute the city-level ZIP area population statistics
+     */
+    private KTable<City, CityStats> computeCityStats(KTable<City, HashSet<ZipArea>> cityAggregated) {
+        return cityAggregated.mapValues(
+                zips -> {
+                    var numberZips = zips.size();
+                    var pop = zips.stream()
+                            .mapToInt(ZipArea::pop)
+                            .sum();
+                    var avgPop = pop / numberZips;
+                    return new CityStats(numberZips, pop, avgPop);
+                },
+                Named.as("city-stats-computer"),
+                Materialized.<City, CityStats, KeyValueStore<Bytes, byte[]>>as("city-stats")
+                        .withKeySerde(citySerde)
+                        .withValueSerde(cityStatsSerde));
+    }
+
+    /**
+     * Group the city stats by state
+     */
+    private KGroupedTable<String, CityStats> groupByState(KTable<City, CityStats> cityStats) {
+        return cityStats.groupBy(
+                (city, stats) -> new KeyValue<>(city.state(), stats),
+                Grouped.<String, CityStats>as("by-state")
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(cityStatsSerde));
+    }
+
+    /**
+     * Aggregate the city stats into a set
+     */
+    private KTable<String, HashSet<CityStats>> aggregateByState(KGroupedTable<String, CityStats> stateGrouped) {
+        return stateGrouped.aggregate(
+                HashSet::new,
+                (state, stats, set) -> {
+                    set.add(stats);
+                    return set;
+                },
+                (state, stats, set) -> {
+                    set.remove(stats);
+                    return set;
+                },
+                Named.as("by-state-aggregator"),
+                Materialized.<String, HashSet<CityStats>, KeyValueStore<Bytes, byte[]>>as("by-state")
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(new JsonSerde<HashSet<CityStats>>(new TypeReference<>() {
+                        })));
+    }
+
+    /**
+     * Compute the state-level ZIP area population statistics
+     */
     private KTable<String, StateStats> computeStateStats(KTable<String, HashSet<CityStats>> stateAggregated) {
         return stateAggregated.mapValues(
                 set -> {
@@ -88,105 +204,9 @@ public class TopologyBuilder {
                         .withValueSerde(stateStatsSerde));
     }
 
-    // Aggregate the city stats into a set
-    private KTable<String, HashSet<CityStats>> aggregateByState(KGroupedTable<String, CityStats> stateGrouped) {
-        return stateGrouped.aggregate(
-                HashSet::new,
-                (state, stats, set) -> {
-                    set.add(stats);
-                    return set;
-                },
-                (state, stats, set) -> {
-                    set.remove(stats);
-                    return set;
-                },
-                Named.as("by-state-aggregator"),
-                Materialized.<String, HashSet<CityStats>, KeyValueStore<Bytes, byte[]>>as("by-state")
-                        .withKeySerde(Serdes.String())
-                        .withValueSerde(new JsonSerde<HashSet<CityStats>>(new TypeReference<>() {
-                        })));
-    }
-
-    // Group the city stats by state
-    private KGroupedTable<String, CityStats> groupByState(KTable<City, CityStats> cityStats) {
-        return cityStats.groupBy(
-                (city, stats) -> new KeyValue<>(city.state(), stats),
-                Grouped.<String, CityStats>as("by-state")
-                        .withKeySerde(Serdes.String())
-                        .withValueSerde(cityStatsSerde));
-    }
-
-    // Compute the city-level ZIP area population statistics
-    private KTable<City, CityStats> computeCityStats(KTable<City, HashSet<ZipArea>> cityAggregated) {
-        return cityAggregated.mapValues(
-                zips -> {
-                    var numberZips = zips.size();
-                    var pop = zips.stream()
-                            .mapToInt(ZipArea::pop)
-                            .sum();
-                    var avgPop = pop / numberZips;
-                    return new CityStats(numberZips, pop, avgPop);
-                },
-                Named.as("city-stats-computer"),
-                Materialized.<City, CityStats, KeyValueStore<Bytes, byte[]>>as("city-stats")
-                        .withKeySerde(citySerde)
-                        .withValueSerde(cityStatsSerde));
-    }
-
-    // Aggregate the grouped ZIP areas into a set.
-    private KTable<City, HashSet<ZipArea>> aggregateCities(KGroupedTable<City, ZipArea> cityGrouped) {
-        return cityGrouped.aggregate(
-                HashSet::new,
-                (key, value, aggregate) -> {
-                    aggregate.add(value);
-                    return aggregate;
-                },
-                (key, value, aggregate) -> {
-                    aggregate.remove(value);
-                    return aggregate;
-                },
-                Named.as("by-city-aggregator"),
-                Materialized.<City, HashSet<ZipArea>, KeyValueStore<Bytes, byte[]>>as("by-city")
-                        .withKeySerde(citySerde)
-                        .withValueSerde(new JsonSerde<HashSet<ZipArea>>(new TypeReference<>() {
-                        })));
-    }
-
-    // Group the ZIP areas by city.
-    //
-    // Think of SQL's "group by". A "group by" always has an accompanying aggregation and it's useful to think about
-    // the grouping and the aggregation in tandem. Look down a few lines at the "aggregate" statement.
-    private KGroupedTable<City, ZipArea> groupByCity(KTable<String, ZipArea> zipAreasTable) {
-        return zipAreasTable.groupBy(
-                (key, value) -> new KeyValue<>(new City(value.city(), value.state()), value),
-                Grouped.<City, ZipArea>as("by-city")
-                        .withKeySerde(citySerde)
-                        .withValueSerde(zipAreaSerde));
-    }
-
-    // Represent ZIP areas as a KTable. ZIP areas need to be represented as a changelog not as a record stream (KStream).
-    // ZIP areas are upserted over time, so we need a KTable.
-    private KTable<String, ZipArea> zipsToTable(KStream<String, ZipArea> zipAreas) {
-        return zipAreas.toTable(
-                Named.as("zip-areas-to-tabler"),
-                Materialized.<String, ZipArea, KeyValueStore<Bytes, byte[]>>as("zip-areas")
-                        .withKeySerde(Serdes.String())
-                        .withValueSerde(zipAreaSerde));
-    }
-
-    // Key ZIP area records on the input topic by ZIP code and pipe to a new topic. Kafka Streams requires keys!
-    private KStream<String, ZipArea> keyOnZipCode(KStream<Void, ZipArea> zipAreasNoKey) {
-        return zipAreasNoKey.map(
-                (_key, zipArea) -> new KeyValue<>(zipArea._id(), zipArea),
-                Named.as("zip-areas-keyer"));
-    }
-
-    // Input. The input topic is not keyed.
-    private KStream<Void, ZipArea> inputZips(StreamsBuilder builder) {
-        return builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Void(), zipAreaSerde));
-    }
-
-    // Group all state stats into a singular overall group
+    /**
+     * Group all state stats into a singular overall group
+     */
     private KGroupedTable<String, StateStats> groupOverall(KTable<String, StateStats> stateStats) {
         return stateStats.groupBy(
                 (key, stats) -> new KeyValue<>("USA", stats),
@@ -195,7 +215,9 @@ public class TopologyBuilder {
                         .withValueSerde(stateStatsSerde));
     }
 
-    // Aggregate the overall state stats into a set.
+    /**
+     * Aggregate the overall state stats into a set.
+     */
     private KTable<String, HashSet<StateStats>> aggregateOverall(KGroupedTable<String, StateStats> overallGrouped) {
         return overallGrouped.aggregate(
                 HashSet::new,
@@ -213,7 +235,9 @@ public class TopologyBuilder {
                         })));
     }
 
-    // Compute the overall ZIP area population statistics
+    /**
+     * Compute the overall ZIP area population statistics
+     */
     @SuppressWarnings("UnusedReturnValue")
     private KTable<String, OverallStats> computerOverallStats(KTable<String, HashSet<StateStats>> overallAggregated) {
         return overallAggregated.mapValues(
@@ -240,6 +264,6 @@ public class TopologyBuilder {
                 Materialized.<String, OverallStats, KeyValueStore<Bytes, byte[]>>as("overall-stats")
                         .withKeySerde(Serdes.String())
                         .withValueSerde(overallStatsSerde)
-                );
+        );
     }
 }
