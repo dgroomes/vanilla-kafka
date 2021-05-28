@@ -41,5 +41,10 @@ createTopic streams-zip-codes-by-state-repartition
 createTopic streams-zip-codes-state-stats-changelog \
   --config cleanup.policy=compact
 
+createTopic streams-zip-codes-overall-repartition
+
+createTopic streams-zip-codes-overall-stats-changelog \
+  --config cleanup.policy=compact
+
 # Admire our work! Describe the Kafka topics (shows number of partitions and configurations)
 kafka-topics --bootstrap-server localhost:9092 --describe

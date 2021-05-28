@@ -26,16 +26,20 @@ public class TopologyBuilder {
     });
     public static final JsonSerde<StateStats> stateStatsSerde = new JsonSerde<>(new TypeReference<>() {
     });
+    public static final JsonSerde<OverallStats> overallStatsSerde = new JsonSerde<>(new TypeReference<>() {
+    });
 
     /**
      * Create a topology that works like this:
      * <p>
      * 1. Reads from the ZIP areas Kafka topic
      * 2. Re-key each message by its city-state pair
-     * 3. Group all ZIP areas by city-state into a collection
+     * 3. Group all ZIP areas by city into a collection
      * 4. Compute the average ZIP area population by city
-     * 5. Group city-level statistics into the state level
-     * 6. Compute the average ZIP are popultion by state
+     * 5. Group city-level statistics by state
+     * 6. Compute the average ZIP area population by state
+     * 7. Group state-level statistics into an overall collection
+     * 8. Compute overall-level ZIP area population
      */
     public Topology build() {
         var builder = new StreamsBuilder();
@@ -50,8 +54,11 @@ public class TopologyBuilder {
 
         KGroupedTable<String, CityStats> stateGrouped = groupByState(cityStats);
         KTable<String, HashSet<CityStats>> stateAggregated = aggregateByState(stateGrouped);
-        @SuppressWarnings("unused")
         KTable<String, StateStats> stateStats = computeStateStats(stateAggregated);
+
+        KGroupedTable<String, StateStats> overallGrouped = groupOverall(stateStats);
+        KTable<String, HashSet<StateStats>> overallAggregated = aggregateOverall(overallGrouped);
+        computerOverallStats(overallAggregated);
 
         return builder.build();
     }
@@ -126,7 +133,7 @@ public class TopologyBuilder {
                         .withValueSerde(cityStatsSerde));
     }
 
-    // Aggregate the grouped cities into a set.
+    // Aggregate the grouped ZIP areas into a set.
     private KTable<City, HashSet<ZipArea>> aggregateCities(KGroupedTable<City, ZipArea> cityGrouped) {
         return cityGrouped.aggregate(
                 HashSet::new,
@@ -177,5 +184,62 @@ public class TopologyBuilder {
     // Input. The input topic is not keyed.
     private KStream<Void, ZipArea> inputZips(StreamsBuilder builder) {
         return builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Void(), zipAreaSerde));
+    }
+
+    // Group all state stats into a singular overall group
+    private KGroupedTable<String, StateStats> groupOverall(KTable<String, StateStats> stateStats) {
+        return stateStats.groupBy(
+                (key, stats) -> new KeyValue<>("USA", stats),
+                Grouped.<String, StateStats>as("overall")
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(stateStatsSerde));
+    }
+
+    // Aggregate the overall state stats into a set.
+    private KTable<String, HashSet<StateStats>> aggregateOverall(KGroupedTable<String, StateStats> overallGrouped) {
+        return overallGrouped.aggregate(
+                HashSet::new,
+                (key, value, aggregate) -> {
+                    aggregate.add(value);
+                    return aggregate;
+                }, (key, value, aggregate) -> {
+                    aggregate.remove(value);
+                    return aggregate;
+                },
+                Named.as("overall-aggregator"),
+                Materialized.<String, HashSet<StateStats>, KeyValueStore<Bytes, byte[]>>as("overall")
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(new JsonSerde<>(new TypeReference<>() {
+                        })));
+    }
+
+    // Compute the overall ZIP area population statistics
+    @SuppressWarnings("UnusedReturnValue")
+    private KTable<String, OverallStats> computerOverallStats(KTable<String, HashSet<StateStats>> overallAggregated) {
+        return overallAggregated.mapValues(
+                new ValueMapper<HashSet<StateStats>, OverallStats>() {
+                    @Override
+                    public OverallStats apply(HashSet<StateStats> set) {
+                        // There should only ever be zero or one, so the collection isn't really necessary. But I've implemented
+                        // it like this because it was easy.
+                        if (set.isEmpty()) {
+                            return null;
+                        }
+                        var numberZipAreas = set.stream()
+                                .mapToInt(StateStats::zipAreas)
+                                .sum();
+                        var pop = set.stream()
+                                .mapToInt(StateStats::totalPop)
+                                .sum();
+
+                        var avg = pop / numberZipAreas;
+                        return new OverallStats(numberZipAreas, pop, avg);
+                    }
+                },
+                Named.as("overall-stats-computer"),
+                Materialized.<String, OverallStats, KeyValueStore<Bytes, byte[]>>as("overall-stats")
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(overallStatsSerde)
+                );
     }
 }

@@ -2,7 +2,7 @@
 
 set -eu
 
-# Consume from the output Kafka Streams topic
+# Consume from the state-level statistics output Kafka Streams topic
 kafka-console-consumer --bootstrap-server localhost:9092 \
     --topic streams-zip-codes-state-stats-changelog \
     --from-beginning \

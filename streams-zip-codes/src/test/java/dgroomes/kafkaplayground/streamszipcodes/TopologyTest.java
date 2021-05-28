@@ -1,6 +1,5 @@
 package dgroomes.kafkaplayground.streamszipcodes;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.TestInputTopic;
 import org.apache.kafka.streams.TestOutputTopic;
@@ -18,6 +17,7 @@ class TopologyTest {
     TestInputTopic<String, ZipArea> input;
     TestOutputTopic<City, CityStats> cityOutput;
     TestOutputTopic<String, StateStats> stateOutput;
+    TestOutputTopic<String, OverallStats> overallOutput;
 
     @BeforeEach
     void before() {
@@ -26,6 +26,7 @@ class TopologyTest {
         input = driver.createInputTopic("streams-zip-codes-zip-areas", Serdes.String().serializer(), TopologyBuilder.zipAreaSerde.serializer());
         cityOutput = driver.createOutputTopic("streams-zip-codes-city-stats-changelog", TopologyBuilder.citySerde.deserializer(), TopologyBuilder.cityStatsSerde.deserializer());
         stateOutput = driver.createOutputTopic("streams-zip-codes-state-stats-changelog", Serdes.String().deserializer(), TopologyBuilder.stateStatsSerde.deserializer());
+        overallOutput = driver.createOutputTopic("streams-zip-codes-overall-stats-changelog", Serdes.String().deserializer(), TopologyBuilder.overallStatsSerde.deserializer());
     }
 
     @AfterEach
@@ -65,6 +66,20 @@ class TopologyTest {
                 .containsExactly(
                         tuple("MA", new StateStats(1, 1, 1)),
                         tuple("MA", new StateStats(2, 4, 2)));
+    }
+
+    @Test
+    void averageOverall() {
+        input.pipeInput(new ZipArea("1", "SPRINGFIELD", "MA", 1));
+        input.pipeInput(new ZipArea("2", "PROVIDENCE", "RI", 3));
+
+        var outputRecords = overallOutput.readRecordsToList();
+
+        assertThat(outputRecords)
+                .extracting("key", "value")
+                .containsExactly(
+                        tuple("USA", new OverallStats(1, 1, 1)),
+                        tuple("USA", new OverallStats(2, 4, 2)));
     }
 
     /**

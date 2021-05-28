@@ -22,9 +22,14 @@ consumeCityStats() {
   "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/consume-city-stats.sh
 }
 
-# Consume from the stat statistics output Kafka topic
+# Consume from the state statistics output Kafka topic
 consumeStateStats() {
   "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/consume-state-stats.sh
+}
+
+# Consume from the overall statistics output Kafka topic
+consumeOverallStats() {
+  "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/consume-overall-stats.sh
 }
 
 # Consume from the input Kafka topic

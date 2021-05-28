@@ -2,9 +2,9 @@
 
 set -eu
 
-# Consume from the city-level statistics output Kafka Streams topic
+# Consume from the overall statistics output Kafka Streams topic
 kafka-console-consumer --bootstrap-server localhost:9092 \
-    --topic streams-zip-codes-city-stats-changelog \
+    --topic streams-zip-codes-overall-stats-changelog \
     --from-beginning \
     --formatter kafka.tools.DefaultMessageFormatter \
     --property print.key=true \

@@ -93,7 +93,7 @@ What is `class [B`?
   named topics with a word like "rekey" or "aggregate-to-collection" instead of the anonymously named 'streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition'.
 * DONE (This is already implemented because we're using keys) De-duplicate the same ZIP area records
 * DONE Compute state-level ZIP area average population
-* Compute overall-level ZIP area average population
+* DONE Compute overall-level ZIP area average population
 * DONE Use a KTable for zip area records because they represent a changelog stream and not an event stream. Read the Kafka
   Streams docs on KStreams vs KTable, they are really good.
 * DONE Fix ZIP area key. It should be keyed on ZIP code not city
