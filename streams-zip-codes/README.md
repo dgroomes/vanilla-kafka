@@ -1,7 +1,5 @@
 # streams-zip-codes
 
-NOT YET FULLY IMPLEMENTED
-
 An intermediate Kafka Streams project that aggregates ZIP code data.
 
 ## Description
@@ -104,7 +102,7 @@ What is `class [B`?
 
 Items I wish to implement for this project:
 
-* Extract all Kafka Streams DSL operations into their own methods so that it is easier to visually trace the topology
+* DONE (Yeah this is way better) Extract all Kafka Streams DSL operations into their own methods so that it is easier to visually trace the topology
   code. It is easy to get lost in the Java types and the topology edges in the topology graph!
 * Are there ways to reduce the sheer quantity of internal topics, like the repartition topics? Is there a way to express
   the topology in such a way that, for example, all zip area records in "MA" (Massachusetts) are sourced from the same
