@@ -21,21 +21,11 @@ class TopologyTest {
 
     @BeforeEach
     void before() {
-        driver = new TopologyTestDriver(App.topology(), App.config());
+        driver = new TopologyTestDriver(new TopologyBuilder().build(), App.config());
 
-        var stringSerde = Serdes.String();
-        var zipAreaSerde = new JsonSerde<>(new TypeReference<ZipArea>() {
-        });
-        var citySerde = new JsonSerde<>(new TypeReference<City>() {
-        });
-        var cityStatsSerde = new JsonSerde<>(new TypeReference<CityStats>() {
-        });
-        var stateStatsSerde = new JsonSerde<>(new TypeReference<StateStats>() {
-        });
-
-        input = driver.createInputTopic("streams-zip-codes-zip-areas", stringSerde.serializer(), zipAreaSerde.serializer());
-        cityOutput = driver.createOutputTopic("streams-zip-codes-city-stats-changelog", citySerde.deserializer(), cityStatsSerde.deserializer());
-        stateOutput = driver.createOutputTopic("streams-zip-codes-state-stats-changelog", stringSerde.deserializer(), stateStatsSerde.deserializer());
+        input = driver.createInputTopic("streams-zip-codes-zip-areas", Serdes.String().serializer(), TopologyBuilder.zipAreaSerde.serializer());
+        cityOutput = driver.createOutputTopic("streams-zip-codes-city-stats-changelog", TopologyBuilder.citySerde.deserializer(), TopologyBuilder.cityStatsSerde.deserializer());
+        stateOutput = driver.createOutputTopic("streams-zip-codes-state-stats-changelog", Serdes.String().deserializer(), TopologyBuilder.stateStatsSerde.deserializer());
     }
 
     @AfterEach
