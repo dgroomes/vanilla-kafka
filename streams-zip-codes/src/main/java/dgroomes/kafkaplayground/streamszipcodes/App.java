@@ -63,6 +63,10 @@ public class App {
         });
         var cityStatsSerde = new JsonSerde<>(new TypeReference<CityStats>() {
         });
+        var hashSetCityStatsSerde = new JsonSerde<>(new TypeReference<HashSet<CityStats>>() {
+        });
+        var stateStatsSerde = new JsonSerde<>(new TypeReference<StateStats>() {
+        });
 
         // Input. The input topic is not keyed.
         KStream<Void, ZipArea> zipAreasNoKey = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Void(), zipAreaSerde));
@@ -108,18 +112,65 @@ public class App {
         // Compute the city-level ZIP area population statistics
         KTable<City, CityStats> cityStats = cityAggregated
                 .mapValues(
-                        collection -> {
-                            @SuppressWarnings("OptionalGetWithoutIsPresent")
-                            var avg = collection.stream()
+                        zips -> {
+                            var numberZips = zips.size();
+                            var pop = zips.stream()
                                     .mapToInt(ZipArea::pop)
-                                    .average()
-                                    .getAsDouble();
-                            return new CityStats(collection.size(), (int) avg);
+                                    .sum();
+                            var avgPop = pop / numberZips;
+                            return new CityStats(numberZips, pop, avgPop);
                         },
                         Named.as("city-stats-computer"),
                         Materialized.<City, CityStats, KeyValueStore<Bytes, byte[]>>as("city-stats")
                                 .withKeySerde(citySerde)
                                 .withValueSerde(cityStatsSerde));
+
+        // Group the city stats by state
+        KGroupedTable<String, CityStats> stateGrouped = cityStats.groupBy(
+                (city, stats) -> new KeyValue<>(city.state(), stats),
+                Grouped.<String, CityStats>as("by-state")
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(cityStatsSerde));
+        // Aggregate the city stats into a set
+        KTable<String, HashSet<CityStats>> stateAggregated = stateGrouped.aggregate(
+                HashSet::new,
+                (state, stats, set) -> {
+                    set.add(stats);
+                    return set;
+                },
+                (state, stats, set) -> {
+                    set.remove(stats);
+                    return set;
+                },
+                Named.as("by-state-aggregator"),
+                Materialized.<String, HashSet<CityStats>, KeyValueStore<Bytes, byte[]>>as("by-state")
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(hashSetCityStatsSerde));
+
+        // Compute the state-level ZIP area population statistics
+        KTable<String, StateStats> stateStats = stateAggregated
+                .mapValues(
+                        set -> {
+                            // I have no idea why the "mapValues" operation is invoked if the set is empty. So, return
+                            // null to avoid a divide by zero exception later.
+                            if (set.isEmpty()) {
+                                return null;
+                            }
+                            var numberZipAreas = set.stream()
+                                    .mapToInt(CityStats::zipAreas)
+                                    .sum();
+                            var pop = set.stream()
+                                    .mapToInt(CityStats::totalPop)
+                                    .sum();
+
+                            var avg = pop / numberZipAreas;
+                            return new StateStats(numberZipAreas, pop, avg);
+                        },
+                        Named.as("state-stats-computer"),
+                        Materialized.<String, StateStats, KeyValueStore<Bytes, byte[]>>as("state-stats")
+                                .withKeySerde(Serdes.String())
+                                .withValueSerde(stateStatsSerde));
+
 
         return builder.build();
     }

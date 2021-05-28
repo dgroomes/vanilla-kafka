@@ -33,7 +33,7 @@ is simple and the data is easily available.
 1. Produce and consume messages
    * In a new terminal, start a consumer process which will eventually receive messages on the output Kafka topic. Use
      the following command:
-   * `consume`
+   * `consumeCityStats`
    * In a new terminal, produce some test data with the following command:
    * `produceSpringfield1`
    * You should see some data in your consumer!
@@ -48,7 +48,7 @@ is simple and the data is easily available.
 ## `commands.sh`
 
 Source the `commands.sh` file using `source commands.sh` which will load your shell with useful
-commands. Commands include: `build`, `startKafka` `run`, `consume` etc. See the contents of the file for more.
+commands. Commands include: `build`, `startKafka` `run`, `consumeCityStats` etc. See the contents of the file for more.
 
 ## Notes
 
@@ -94,7 +94,7 @@ What is `class [B`?
   I am already relying on manually created topics and so I have to know the topic names. So it's an opportunity to use meaningfully
   named topics with a word like "rekey" or "aggregate-to-collection" instead of the anonymously named 'streams-zip-codes-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition'.
 * DONE (This is already implemented because we're using keys) De-duplicate the same ZIP area records
-* Compute state-level ZIP area average population
+* DONE Compute state-level ZIP area average population
 * Compute overall-level ZIP area average population
 * DONE Use a KTable for zip area records because they represent a changelog stream and not an event stream. Read the Kafka
   Streams docs on KStreams vs KTable, they are really good.
@@ -106,6 +106,12 @@ Items I wish to implement for this project:
 
 * Extract all Kafka Streams DSL operations into their own methods so that it is easier to visually trace the topology
   code. It is easy to get lost in the Java types and the topology edges in the topology graph!
+* Are there ways to reduce the sheer quantity of internal topics, like the repartition topics? Is there a way to express
+  the topology in such a way that, for example, all zip area records in "MA" (Massachusetts) are sourced from the same
+  source topic partition? I know Kafka Streams doesn't know that a ZIP code always stays within the same state, but it's
+  true. Can a custom partitioner implementation solve this?
+* More tests. Specifically, test same-key updates in the city aggregation without a leading ZIP area. I think we'll get
+  the empty scenario that happens in the state aggregation.
 
 ## Reference
 

@@ -17,9 +17,14 @@ currentOffsets() {
   "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/current-offsets.sh
 }
 
-# Consume from the output Kafka topic
-consume() {
-  "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/consume.sh
+# Consume from the city statistics output Kafka topic
+consumeCityStats() {
+  "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/consume-city-stats.sh
+}
+
+# Consume from the stat statistics output Kafka topic
+consumeStateStats() {
+  "$KAFKA_STREAMS_ZIP_CODES_ROOT_DIR"/scripts/consume-state-stats.sh
 }
 
 # Consume from the input Kafka topic

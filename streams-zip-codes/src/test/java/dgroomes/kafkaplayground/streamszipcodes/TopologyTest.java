@@ -17,6 +17,7 @@ class TopologyTest {
     TopologyTestDriver driver;
     TestInputTopic<String, ZipArea> input;
     TestOutputTopic<City, CityStats> cityOutput;
+    TestOutputTopic<String, StateStats> stateOutput;
 
     @BeforeEach
     void before() {
@@ -29,9 +30,12 @@ class TopologyTest {
         });
         var cityStatsSerde = new JsonSerde<>(new TypeReference<CityStats>() {
         });
+        var stateStatsSerde = new JsonSerde<>(new TypeReference<StateStats>() {
+        });
 
         input = driver.createInputTopic("streams-zip-codes-zip-areas", stringSerde.serializer(), zipAreaSerde.serializer());
         cityOutput = driver.createOutputTopic("streams-zip-codes-city-stats-changelog", citySerde.deserializer(), cityStatsSerde.deserializer());
+        stateOutput = driver.createOutputTopic("streams-zip-codes-state-stats-changelog", stringSerde.deserializer(), stateStatsSerde.deserializer());
     }
 
     @AfterEach
@@ -52,8 +56,25 @@ class TopologyTest {
         assertThat(outputRecords)
                 .extracting("key", "value")
                 .containsExactly(
-                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(1, 1)),
-                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(2, 2)));
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(1, 1, 1)),
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(2, 4, 2)));
+    }
+
+    /**
+     * The topology should compute an average of ZIP area populations for each state
+     */
+    @Test
+    void averageByState() {
+        input.pipeInput(new ZipArea("1", "SPRINGFIELD", "MA", 1));
+        input.pipeInput(new ZipArea("2", "BOSTON", "MA", 3));
+
+        var outputRecords = stateOutput.readRecordsToList();
+
+        assertThat(outputRecords)
+                .extracting("key", "value")
+                .containsExactly(
+                        tuple("MA", new StateStats(1, 1, 1)),
+                        tuple("MA", new StateStats(2, 4, 2)));
     }
 
     /**
@@ -70,8 +91,8 @@ class TopologyTest {
         assertThat(outputRecords)
                 .map(record -> tuple(record.key(), record.value()))
                 .containsExactly(
-                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(1, 1)),
-                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(2, 2)),
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(1, 1, 1)),
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(2, 4, 2)),
 
                         // When the second ZIP area record for ZIP code 2 occurs, it is an "upsert". As such, this engages
                         // the KTable's "subtractor" and "adder" operations which together make the effect of an upsert.
@@ -82,7 +103,7 @@ class TopologyTest {
                         //
                         // I think there is a solution to this. I could research more. But also I think if I create a
                         // KStream out of the KTable it might solve it. But I want to minimize the Kafka topics.
-                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(1, 1)),
-                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(2, 1)));
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(1, 1, 1)),
+                        tuple(new City("SPRINGFIELD", "MA"), new CityStats(2, 2, 1)));
     }
 }

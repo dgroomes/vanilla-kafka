@@ -1,11 +1,18 @@
 package dgroomes.kafkaplayground.streamszipcodes;
 
 /**
- * Statistics at a city-state level.
+ * Statistics at a city level.
+ * <p>
  * The city and state fields are purposely not included in this record because they are meant to be specified in the
  * CityState class.
  */
 public record CityStats(
-        int numberZipAreas,
-        int averageZipAreaPopulation) {
+        // The number of ZIP areas in the city
+        int zipAreas,
+
+        // Total city population
+        int totalPop,
+
+        // The average population of ZIP areas in the city
+        int avgPop) {
 }

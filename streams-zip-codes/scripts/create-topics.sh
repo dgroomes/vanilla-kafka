@@ -23,8 +23,7 @@ createTopic() {
 createTopic streams-zip-codes-zip-areas
 
 # Explicitly create the internal topic that the Kafka Streams application uses. I prefer to not use auto topic creation.
-createTopic streams-zip-codes-zip-areas-to-tabler-repartition \
-  --config retention.ms=-1
+createTopic streams-zip-codes-zip-areas-to-tabler-repartition
 
 createTopic streams-zip-codes-zip-areas-changelog \
   --config cleanup.policy=compact
@@ -35,6 +34,11 @@ createTopic streams-zip-codes-by-city-changelog \
 createTopic streams-zip-codes-by-city-repartition
 
 createTopic streams-zip-codes-city-stats-changelog \
+  --config cleanup.policy=compact
+
+createTopic streams-zip-codes-by-state-repartition
+
+createTopic streams-zip-codes-state-stats-changelog \
   --config cleanup.policy=compact
 
 # Admire our work! Describe the Kafka topics (shows number of partitions and configurations)
