@@ -36,6 +36,6 @@ Copy the scripts to the other sub-projects with `./copy-scripts.sh`.
 
 General clean ups, TODOs and things I wish to implement for this project:
 
-* Add a wait loop in the stop script. I'm pretty sure Kafka takes a while to stop sometimes and if you kick off the stop
+* DONE Add a wait loop in the stop script. I'm pretty sure Kafka takes a while to stop sometimes and if you kick off the stop
   command without waiting for Kafka to come to a complete stop, then it's undefined what happens next if you execute other
   commands in the mean time.
