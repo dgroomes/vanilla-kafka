@@ -34,6 +34,12 @@ A basic [Kafka Streams](https://kafka.apache.org/documentation/streams/) applica
 
 See the README in [streams/](streams/).
 
+### `streams-zip-codes/`
+
+An intermediate Kafka Streams project that aggregates ZIP code data.
+
+See the README in [streams-zip-codes/](streams-zip-codes/).
+
 ### `spring-seekable/`
 
 A basic [Spring Kafka](https://spring.io/projects/spring-kafka) application with a "seekable" Kafka listener.
