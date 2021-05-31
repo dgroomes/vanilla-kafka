@@ -1,5 +1,6 @@
 package dgroomes;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
@@ -10,7 +11,7 @@ public class TheTest extends BaseTest {
 
     /**
      * This is a 'happy path' test case.
-     *
+     * <p>
      * Exercise the 'app' by sending a message to the input Kafka topic, waiting a brief time for the 'app' to process
      * the message, and then consume from the output topic with the expectation that the 'app' successfully processed
      * and published a quoted version of the input message. Assert te contents of the output message.
@@ -22,12 +23,9 @@ public class TheTest extends BaseTest {
 
         // Act
         send(msg);
-        Thread.sleep(200);
 
         // Assert
-        var records = consume();
-        assertThat(records).hasSize(1);
-        var record = records.get(0);
+        var record = consumer.take();
         assertThat(record.value()).isEqualTo("\"Did you say \\\"hello\\\"?\"");
     }
 
@@ -42,12 +40,9 @@ public class TheTest extends BaseTest {
 
         // Act
         send(uniqueMsg);
-        Thread.sleep(200);
 
         // Assert
-        var records = consume();
-        assertThat(records).hasSize(1);
-        var record = records.get(0);
+        var record = consumer.take();
         var expected = String.format("%s%s%s", '"', uniqueMsg, '"');
         assertThat(record.value()).isEqualTo(expected);
     }
