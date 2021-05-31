@@ -1,0 +1,11 @@
+spring:
+  kafka:
+    consumer:
+      group-id: spring-multi-broker
+      bootstrap-servers: localhost:9092
+    listener:
+      log-container-config: true
+logging:
+  level:
+    org.springframework.kafka.listener: warn
+    org.apache.kafka.clients.consumer: warn

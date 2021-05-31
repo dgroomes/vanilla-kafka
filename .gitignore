@@ -4,5 +4,7 @@ build/
 *.iml
 out/
 tmp-kafka/
+tmp-kafka-a/
+tmp-kafka-b/
 tmp/
 .DS_Store
