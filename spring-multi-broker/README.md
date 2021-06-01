@@ -39,7 +39,7 @@ to multiple Kafka brokers. In other words:
 * DONE Modify the Kafka start script to create two clusters: an "A" cluster and a "B" cluster
 * DONE Scripts to produce test messages to each of the clusters
 * DONE Consume from the A cluster
-* Consume from the B cluster
+* DONE Consume from the B cluster
 
 ## `commands.sh`
 
@@ -52,3 +52,7 @@ commands. Commands include:
   * `run` run the app
   * `produceBrokerA` produce a test message to the `my-messages` Kafka topic on the "A" Kafka cluster 
   * `produceBrokerB` produce a test message to the `my-messages` Kafka topic on the "B" Kafka cluster 
+
+## Reference
+
+* [Spring for Apache Kafka: Reference Doc](https://docs.spring.io/spring-kafka/docs/current/reference/html/)

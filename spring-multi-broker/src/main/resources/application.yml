@@ -2,10 +2,15 @@ spring:
   kafka:
     consumer:
       group-id: spring-multi-broker
-      bootstrap-servers: localhost:9092
     listener:
       log-container-config: true
 logging:
   level:
-    org.springframework.kafka.listener: warn
-    org.apache.kafka.clients.consumer: warn
+    org.springframework.kafka: warn
+    org.apache.kafka.clients: warn
+
+# Application-specific config. By convention, I prefer to namespace all of my custom-defined configuration properties
+# underneath the name "app". It contrasts effectively to the "spring" prefixed config.
+app:
+  bootstrap-servers-broker-a: localhost:9092
+  bootstrap-servers-broker-b: localhost:9192

@@ -5,7 +5,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
@@ -21,6 +20,7 @@ import java.util.Map;
 public class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
+    public static final String TOPIC = "my-messages";
 
     public static void main(String[] args) {
         log.info("Listening for Kafka messages using Spring for Apache Kafka's very useful abstractions");
@@ -34,13 +34,11 @@ public class Main {
      * point). It is an effective abstraction over the Java Kafka client library.
      */
     public static KafkaMessageListenerContainer<Void, String> kafkaMessageListenerContainer() {
-        ContainerProperties containerProperties = new ContainerProperties("my-messages");
-        containerProperties.setMessageListener(listener());
-        return new KafkaMessageListenerContainer<>(consumerFactory(), containerProperties);
-    }
+        ContainerProperties containerProperties = new ContainerProperties(TOPIC);
+        containerProperties.setMessageListener(new Listener());
 
-    public static ConsumerFactory<Void, String> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs());
+        var consumerFactory = new DefaultKafkaConsumerFactory<Void, String>(consumerConfigs());
+        return new KafkaMessageListenerContainer<>(consumerFactory, containerProperties);
     }
 
     public static Map<String, Object> consumerConfigs() {
@@ -50,10 +48,6 @@ public class Main {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         return props;
-    }
-
-    public static Listener listener() {
-        return new Listener();
     }
 
     public static class Listener implements MessageListener<Void, String> {
