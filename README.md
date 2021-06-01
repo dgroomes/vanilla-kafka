@@ -66,6 +66,12 @@ A simple Java program to process messages from a Kafka topic using abstractions 
 
 See the README in [spring-barebones/](spring-barebones/).
 
+### `spring-multi-broker`
+
+A Spring Kafka application that consumes from multiple Kafka brokers.
+
+See the README in [spring-multi-broker/](spring-multi-broker/).
+
 ### `utility-scripts/`
 
 Utility Bash scripts for starting and stopping Kafka.

@@ -1,7 +1,5 @@
 # spring-multi-broker
 
-NOT YET FULLY IMPLEMENTED
-
 A Spring Kafka application that consumes from multiple Kafka brokers.
 
 ---
@@ -33,13 +31,6 @@ to multiple Kafka brokers. In other words:
    * When you are done, stop the application in the other terminal.
    * Stop the Kafka brokers with the following command:
    * `stopKafka`
-
-## TODO
-
-* DONE Modify the Kafka start script to create two clusters: an "A" cluster and a "B" cluster
-* DONE Scripts to produce test messages to each of the clusters
-* DONE Consume from the A cluster
-* DONE Consume from the B cluster
 
 ## `commands.sh`
 
